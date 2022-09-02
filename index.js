@@ -7,6 +7,8 @@ const start = () => {
   bot.setMyCommands([
     { command: "/start", description: "Приветствие" },
     { command: "/info", description: "Информация о клубе" },
+    { command: "/partners", description: "Партнеры клуба" },
+    { command: "/donate", description: "Донат на поддержку клуба" },
   ]);
 
   bot.on("message", async (msg) => {
