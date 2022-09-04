@@ -11,8 +11,8 @@ const bot = new TelegramApi(token, { polling: true });
 const start = async () => {
 
   try {
-    await sequelize.authenticate();
-    await sequelize.sync();
+    await sequelize.authenticate()
+    await sequelize.sync()
   } catch (e) {
     console.log('Подключение к бд сломалось');
   }
@@ -36,7 +36,7 @@ const start = async () => {
 
     try {
       if (text === "/start") {
-        await UserModel.create({ chatId });
+        // await UserModel.create({ chatId });
         await bot.sendSticker(
           chatId,
           "https://tlgrm.ru/_/stickers/f05/e49/f05e49e1-57e9-31b7-a7de-1d0b09fea98e/5.webp"
