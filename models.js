@@ -1,7 +1,7 @@
 const sequelize = require('./db');
 const { DataTypes } = require('sequelize');
 
-const User = sequelize.define('user', {
+const Users = sequelize.define('user', {
 	id: { type: DataTypes.INTEGER, primaryKey: true, unique: true, autoIncrement: true },
 	chatId: { type: DataTypes.STRING, unique: true },
 	userName: { type: DataTypes.STRING, defaultValue: 0 },
@@ -19,4 +19,4 @@ const User = sequelize.define('user', {
 // 	carEngineModel: { type: DataTypes.STRING },
 // })
 
-module.exports = User;
+module.exports = Users;

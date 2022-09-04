@@ -1,8 +1,8 @@
 const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
-const UserModel = require('./models');
-const { allBtns } = require('./keyboards');
+const UsersModel = require('./models');
+const { allBtns, regBtn } = require('./keyboards');
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
@@ -13,9 +13,17 @@ const start = async () => {
   try {
     await sequelize.authenticate()
     await sequelize.sync()
+    console.log('Connection has been established successfully.');
   } catch (e) {
     console.log('Подключение к бд сломалось');
   }
+
+  // const query = `SELECT chatId FROM users`;
+  // sequelize.query(query, async function (err, results) {
+  //   if (err) console.log(err);
+  //   console.log(results);
+  // });
+
 
   bot.setMyCommands([
     { command: "/start", description: "Приветствие" },
@@ -29,22 +37,62 @@ const start = async () => {
     { command: "/salecars", description: "Продажа авто" }
   ]);
 
+
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
-    console.log(msg);
+    // console.log(msg);
+
+
 
     try {
+
       if (text === "/start") {
-        // await UserModel.create({ chatId });
-        await bot.sendSticker(
-          chatId,
-          "https://tlgrm.ru/_/stickers/f05/e49/f05e49e1-57e9-31b7-a7de-1d0b09fea98e/5.webp"
-        );
-        return bot.sendMessage(
-          chatId,
-          `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-        );
+
+        const userChatId = await UsersModel.findAll({
+          attributes: [
+            'chatId'
+          ]
+        })
+        console.log(userChatId);
+        console.log(chatId);
+        console.log(userChatId == chatId);
+
+
+        // await bot.sendSticker(
+        //   chatId,
+        //   "https://tlgrm.ru/_/stickers/f05/e49/f05e49e1-57e9-31b7-a7de-1d0b09fea98e/5.webp"
+        // );
+
+        // if (userChatId) {
+        //   return bot.sendMessage(
+        //     chatId,
+        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        //     allBtns
+        //   )
+        // } else {
+        //   await UsersModel.create({ chatId });
+        //   return bot.sendMessage(
+        //     chatId,
+        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        //     regBtn
+        //   )
+        // }
+
+        // if (userChatId == chatId) {
+        //   await UsersModel.create({ chatId });
+        //   return bot.sendMessage(
+        //     chatId,
+        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        //     regBtn
+        //   )
+        // } else {
+        //   return bot.sendMessage(
+        //     chatId,
+        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        //     allBtns
+        //   )
+        // }
       }
       if (text === "/info") {
         return bot.sendMessage(
@@ -166,6 +214,14 @@ const start = async () => {
         `Продажа авто`,
         allBtns
       );
+    }
+    if (data === '/reg') {
+      return (
+        bot.sendMessage(
+          chatId,
+          `Как тебя зовут?`
+        )
+      )
     }
   });
 };
