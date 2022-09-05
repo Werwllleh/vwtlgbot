@@ -33,16 +33,17 @@ const start = async () => {
   ]);
 
 
-
-
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
     try {
-      /* bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (msg) => {
-        return bot.sendMessage(chatId, "Ваше имя добавлено.");
-      }); */
+
+      bot.onText(/\start/, msg => {
+        const helloText = `Здравствуй, ${msg.from.first_name}\nВыберите команду для начала работы:`;
+        bot.sendMessage(chatId, helloText)
+      })
+
 
       if (text === "/start") {
         const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
@@ -59,73 +60,69 @@ const start = async () => {
           // return UsersModel.create({ chatId });
 
           user = {};
-
-
-
           await bot.sendMessage(
             chatId,
             'Как Вас зовут?',
           );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
             user.userName = text.text;
-            return bot.sendMessage(chatId, "Ваше имя добавлено");
+            await bot.sendMessage(
+              chatId,
+              `Здравствуй ${user.userName}!`);
           })
           await bot.sendMessage(
             chatId,
-            'Ваша фамилия?'
+            'Назови свою фамилию',
           );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
             user.userSurName = text.text;
-            return bot.sendMessage(chatId, "Ваша фамилия добавлена");
-          });
-          await bot.sendMessage(
-            chatId,
-            'На каком авто Вы ездите? пример:Skoda Octavia, Volkswagen Passat'
-          );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
-            user.carModel = text.text;
-            return bot.sendMessage(chatId, "Ваше авто добавлено");
-          });
-          await bot.sendMessage(
-            chatId,
-            'Год выпуска авто?'
-          );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
-            user.carYear = text.text;
-            return bot.sendMessage(chatId, "Год добавлен");
-          });
-          await bot.sendMessage(
-            chatId,
-            'Номер вашего авто?'
-          );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
-            user.carGRZ = text.text;
-            return bot.sendMessage(chatId, "ГРЗ добавлен");
-          });
-          await bot.sendMessage(
-            chatId,
-            'Модель вашего двигателя?'
-          );
-          await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
-            user.carEngineModel = text.text;
-            return bot.sendMessage(chatId, "Модель двигателя добавлена");
-          });
-          console.log(user);
+            await bot.sendMessage(
+              chatId,
+              `Записал!\n\nНа чем ездишь?)`);
+          })
+
+          // await bot.sendMessage(
+          //   chatId,
+          //   'Ваша фамилия?'
+          // );
+          // await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          //   user.userSurName = text.text;
+          //   return bot.sendMessage(chatId, "Ваша фамилия добавлена");
+          // });
+          // await bot.sendMessage(
+          //   chatId,
+          //   'На каком авто Вы ездите? пример:Skoda Octavia, Volkswagen Passat'
+          // );
+          // await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          //   user.carModel = text.text;
+          //   return bot.sendMessage(chatId, "Ваше авто добавлено");
+          // });
+          // await bot.sendMessage(
+          //   chatId,
+          //   'Год выпуска авто?'
+          // );
+          // await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          //   user.carYear = text.text;
+          //   return bot.sendMessage(chatId, "Год добавлен");
+          // });
+          // await bot.sendMessage(
+          //   chatId,
+          //   'Номер вашего авто?'
+          // );
+          // await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          //   user.carGRZ = text.text;
+          //   return bot.sendMessage(chatId, "ГРЗ добавлен");
+          // });
+          // await bot.sendMessage(
+          //   chatId,
+          //   'Модель вашего двигателя?'
+          // );
+          // await bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (text) => {
+          //   user.carEngineModel = text.text;
+          //   return bot.sendMessage(chatId, "Модель двигателя добавлена");
+          // });
         }
       }
-
-      /* bot.sendMessage(chatId, "Ваше имя?");
-      bot.onText(/[A-Za-zА-Яа-яЁё]+(\s+[A-Za-zА-Яа-яЁё]+)?/, async (msg) => {
-        return bot.sendMessage(chatId, "Ваш номер успешно добавлен.");
-      }); */
-
-      /* return (
-        bot.sendMessage(
-          chatId,
-          `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-          regBtn
-        )
-      ) */
 
       if (text === "/info") {
         return bot.sendMessage(
@@ -248,23 +245,6 @@ const start = async () => {
       );
     }
     if (data === '/reg') {
-      /* return bot.sendMessage(
-        chatId,
-        `Ваше имя?`,
-        allBtns
-      ); */
-      bot.onText(/\/reg/, async msg => {
-        const namePrompt = await bot.sendMessage(chatId, "Hi, what's your name?", {
-          reply_markup: {
-            force_reply: true,
-          },
-        });
-        bot.onReplyToMessage(chatId, namePrompt.message_id, async (nameMsg) => {
-          const name = nameMsg.text;
-          // save name in DB if you want to ...
-          await bot.sendMessage(chatId, `Hello ${name}!`);
-        });
-      });
     }
   });
 };
