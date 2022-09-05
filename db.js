@@ -3,7 +3,7 @@ const { Sequelize } = require("sequelize");
 module.exports = new Sequelize(
 	"postgres",
 	"postgres",
-	"admin",
+	"root",
 	{
 		host: "localhost",
 		port: "5432",

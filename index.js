@@ -18,13 +18,6 @@ const start = async () => {
     console.log('Подключение к бд сломалось');
   }
 
-  // const query = `SELECT chatId FROM users`;
-  // sequelize.query(query, async function (err, results) {
-  //   if (err) console.log(err);
-  //   console.log(results);
-  // });
-
-
   bot.setMyCommands([
     { command: "/start", description: "Приветствие" },
     { command: "/info", description: "Информация о клубе" },
@@ -41,58 +34,32 @@ const start = async () => {
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
-    // console.log(msg);
-
-
 
     try {
-
       if (text === "/start") {
 
-        const userChatId = await UsersModel.findAll({
-          attributes: [
-            'chatId'
-          ]
-        })
-        console.log(userChatId);
-        console.log(chatId);
-        console.log(userChatId == chatId);
+        const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
 
-
-        // await bot.sendSticker(
-        //   chatId,
-        //   "https://tlgrm.ru/_/stickers/f05/e49/f05e49e1-57e9-31b7-a7de-1d0b09fea98e/5.webp"
-        // );
-
-        // if (userChatId) {
-        //   return bot.sendMessage(
-        //     chatId,
-        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-        //     allBtns
-        //   )
-        // } else {
-        //   await UsersModel.create({ chatId });
-        //   return bot.sendMessage(
-        //     chatId,
-        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-        //     regBtn
-        //   )
-        // }
-
-        // if (userChatId == chatId) {
-        //   await UsersModel.create({ chatId });
-        //   return bot.sendMessage(
-        //     chatId,
-        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-        //     regBtn
-        //   )
-        // } else {
-        //   return bot.sendMessage(
-        //     chatId,
-        //     `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-        //     allBtns
-        //   )
-        // }
+        if (userChatId) {
+          if (userChatId.toJSON().chatId === chatId) {
+            return (
+              bot.sendMessage(
+                chatId,
+                `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+                allBtns
+              )
+            )
+          }
+        } else {
+          await UsersModel.create({ chatId });
+          return (
+            bot.sendMessage(
+              chatId,
+              `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+              regBtn
+            )
+          )
+        }
       }
       if (text === "/info") {
         return bot.sendMessage(
