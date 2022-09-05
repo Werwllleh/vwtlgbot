@@ -30,7 +30,6 @@ const start = async () => {
     { command: "/salecars", description: "Продажа авто" }
   ]);
 
-
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
