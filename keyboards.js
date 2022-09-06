@@ -1,22 +1,23 @@
 // Настройки для отправки сообщения
 
+
 module.exports = {
-	allBtns: {
+	menu: {
 		reply_markup: JSON.stringify({
 			// Добавляем все кнопки
-			inline_keyboard: [
-				[{ text: 'О клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
+			keyboard: [
+				[{ text: 'Информация о клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
 				[{ text: 'Наши авто', callback_data: "/ourcars" }, { text: 'Мероприятия', callback_data: "/events" }],
 				[{ text: 'Поиск авто по ГРЗ', callback_data: "/searchcar" }, { text: 'Запросить помошь', callback_data: "/sos" }],
 				[{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }]
 			],
 		})
 	},
-	regBtn: {
+	back: {
 		reply_markup: JSON.stringify({
 			// Добавляем кнопку регистрации
 			inline_keyboard: [
-				[{ text: 'Зарегистрироваться', callback_data: "/reg" }],
+				[{ text: 'Вернуться в меню', callback_data: "/back" }],
 			],
 		})
 	},
