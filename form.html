@@ -9,11 +9,12 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/form-style.css" />
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 </head>
 
 <body>
 	<div class="form-body">
-		<form class="reg-form" action="">
+		<form id="reg-form" class="reg-form">
 			<h1 class="title-from">Регистрация</h1>
 			<div class="form-fields">
 				<div class="form-item">
@@ -33,7 +34,7 @@
 						pattern=“[A-Za-z]”>
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text" required
+					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="number" required
 						maxlength="4">
 				</div>
 				<div class="form-item">
@@ -53,13 +54,47 @@
 				<div class="form-note">
 					Поля со * обязательны к заполнению
 				</div>
-				<div class="form-submit">
-					<button type="submit" class="form-submit-btn">Отправить</button>
-				</div>
 			</div>
 		</form>
 
 	</div>
+	<script>
+		let tg = window.Telegram.WebApp;
+		tg.MainButton.show();
+		tg.MainButton.setText('Отправить');
+		let form = document.querySelector('#reg-form');
+		let user_name = document.querySelector('input[name="user_name"]');
+		let user_surname = document.querySelector('input[name="user_surname"]');
+		let car_name = document.querySelector('input[name="car_name"]');
+		let car_model_name = document.querySelector('input[name="car_model_name"]');
+		let car_year = document.querySelector('input[name="car_year"]');
+		let car_grz = document.querySelector('input[name="car_grz"]');
+		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
+		let user_id = tg.initDataUnsafe.user.id;
+
+
+
+		tg.onEvent('mainButtonClicked', () => {
+
+			user = {
+				chat_id: user_id,
+				user_name: user_name.value,
+				user_surname: user_surname.value,
+				car_name: car_name.value,
+				car_model_name: car_model_name.value,
+				car_year: car_year.value,
+				car_grz: car_grz.value,
+				car_engine_name: car_engine_name.value
+			}
+
+			/* tg.sendData(user); */
+			console.log(user);
+
+			//при клике на основную кнопку отправляем данные в строковом виде
+			tg.close();
+		});
+
+	</script>
 </body>
 
 </html>

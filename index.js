@@ -55,7 +55,7 @@ const start = async () => {
           return bot.sendMessage(
             chatId,
             `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\n\nПожалуйста зарегистрируйтесь`,
-            {
+            /* {
               reply_markup: JSON.stringify({
                 inline_keyboard: [
                   [{
@@ -64,7 +64,7 @@ const start = async () => {
                   }],
                 ],
               })
-            }
+            } */
           )
         }
       }
