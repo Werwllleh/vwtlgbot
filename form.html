@@ -7,8 +7,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Document</title>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="/form-style.css" />
+	<link rel="stylesheet" href="src/css/form-style.css" />
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script src="/src/js/jquery-3.6.1.min.js"></script>
 
 </head>
 
@@ -34,8 +35,7 @@
 						pattern=“[A-Za-z]”>
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="number" required
-						maxlength="4">
+					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text">
 				</div>
 				<div class="form-item">
 					<input class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text" required maxlength="9">
@@ -72,6 +72,16 @@
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
 		let user_id = tg.initDataUnsafe.user.id;
 
+		function validate_form() {
+			valid = true;
+
+			if (user_name.value == "") {
+				alert("Пожалуйста заполните поле 'Ваше имя'.");
+				valid = false;
+			}
+
+			return valid;
+		}
 
 
 		tg.onEvent('mainButtonClicked', () => {
