@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Document</title>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/form-style.css" />
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+	<div class="form-body">
+		<form class="reg-form" action="">
+			<h1 class="title-from">Регистрация</h1>
+			<div class="form-fields">
+				<div class="form-item">
+					<input class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text" required
+						pattern="[А-Яа-яЁё]">
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text" required
+						pattern="[А-Яа-яЁё]">
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="car_name" placeholder="Марка авто*" type="text" required
+						pattern=“[A-Za-z]”>
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="car_model_name" placeholder="Модель авто*" type="text" required
+						pattern=“[A-Za-z]”>
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text" required
+						maxlength="4">
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text" required maxlength="9">
+				</div>
+				<div class="form-item">
+					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" type="text"
+						maxlength="4" pattern=“[A-Za-z]”>
+				</div>
+				<div class="form-item form-item-files">
+					<p>Фото вашего авто:</p>
+					<input class="form-item__input form-item-files-input" name="car_photo" type="file" multiple
+						accept="image/jpeg,image/png,image/jpg, impage/HEIC">
+				</div>
+			</div>
+			<div class="form-footer">
+				<div class="form-note">
+					Поля со * обязательны к заполнению
+				</div>
+				<div class="form-submit">
+					<button type="submit" class="form-submit-btn">Отправить</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</body>
+
+</html>

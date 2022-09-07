@@ -36,6 +36,7 @@ const start = async () => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
+
     try {
 
       if (text === "/start") {
@@ -57,29 +58,16 @@ const start = async () => {
             {
               reply_markup: JSON.stringify({
                 inline_keyboard: [
-                  [{ text: 'Зарегистрироваться', callback_data: "/reg" }],
+                  [{
+                    text: 'Зарегистрироваться',
+                    web_app: { url: 'https://cyan-monkeys-dream-85-234-6-154.loca.lt/form.html' }
+                  }],
                 ],
               })
             }
           )
         }
       }
-
-      bot.onText(/\/echo(.+)/, (msg, match) => {
-
-        // The 'msg' is the received Message from Telegram
-        // and 'match' is the result of executing the regexp 
-        // above on the text content of the message
-
-        const chatId = msg.chat.id;
-
-        // The captured "whatever"
-        const resp = match[1];
-
-        // send back the matched "whatever" to the chat
-        bot.sendMessage(chatId, resp);
-
-      });
 
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
@@ -92,6 +80,10 @@ const start = async () => {
   bot.on('callback_query', async (msg) => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
+
+    if (data === '/reg') {
+
+    }
 
   });
 };
