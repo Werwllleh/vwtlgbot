@@ -76,7 +76,33 @@ const start = async () => {
         return bot.sendMessage(
           chatId,
           `Мы VAG клуб Чебоксар!\n\nЧто тебя интересует?`,
-          back
+          {
+            reply_markup: JSON.stringify({
+              // Добавляем кнопку регистрации
+              keyboard: [
+                [{ text: 'Показать меню', callback_data: "/back" }],
+              ],
+            })
+          }
+        )
+      }
+      if (text === "Показать меню") {
+        return (
+          bot.sendMessage(
+            chatId,
+            `а`,
+            {
+              reply_markup: JSON.stringify({
+                // Добавляем все кнопки
+                keyboard: [
+                  [{ text: 'Информация о клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
+                  [{ text: 'Наши авто', callback_data: "/ourcars" }, { text: 'Мероприятия', callback_data: "/events" }],
+                  [{ text: 'Поиск авто по ГРЗ', callback_data: "/searchcar" }, { text: 'Запросить помошь', callback_data: "/sos" }],
+                  [{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }]
+                ],
+              })
+            }
+          )
         )
       }
 
@@ -96,7 +122,7 @@ const start = async () => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
 
-    if (data === '/reg') {
+    if (data === '/back') {
 
     }
 
