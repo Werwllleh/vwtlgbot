@@ -2,7 +2,7 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { allBtns, regBtn } = require('./keyboards');
+const { menu, back } = require('./keyboards');
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
@@ -72,6 +72,13 @@ const start = async () => {
           )
         }
       }
+      if (text === "/info") {
+        return bot.sendMessage(
+          chatId,
+          `Мы VAG клуб Чебоксар!\n\nЧто тебя интересует?`,
+          back
+        )
+      }
 
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
@@ -82,7 +89,6 @@ const start = async () => {
   user = {}
 
   bot.on("web_app_data", async (msg) => {
-    console.log(msg);
     bot.sendMessage(msg.chat.id, msg.web_app_data.data);
   });
 

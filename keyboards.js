@@ -16,8 +16,8 @@ module.exports = {
 	back: {
 		reply_markup: JSON.stringify({
 			// Добавляем кнопку регистрации
-			inline_keyboard: [
-				[{ text: 'Вернуться в меню', callback_data: "/back" }],
+			keyboard: [
+				[{ text: 'Вернуться к меню', callback_data: "/back" }],
 			],
 		})
 	},

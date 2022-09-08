@@ -48,9 +48,6 @@
 				<div class="form-note">
 					Поля со * обязательны к заполнению
 				</div>
-				<div class="form-submit">
-					<button id="submit" class="form-submit-btn">Отправить</button>
-				</div>
 			</div>
 		</form>
 
@@ -59,8 +56,6 @@
 		let tg = window.Telegram.WebApp;
 
 		tg.MainButton.show();
-
-
 
 		let form = document.querySelector('#reg-form');
 		let sendBtn = document.querySelector('#send-btn');
@@ -77,6 +72,7 @@
 			tg.sendData(
 				`${user_name.value}\n${user_surname.value}`);
 			//при клике на основную кнопку отправляем данные в строковом виде
+			tg.close();
 		});
 
 
