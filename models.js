@@ -17,6 +17,8 @@ const Users = sequelize.define('user', {
 	carYear: { type: DataTypes.DATE, allowNull: false },
 	carGRZ: { type: DataTypes.STRING, unique: true, allowNull: false },
 	carEngineModel: { type: DataTypes.STRING, allowNull: false },
+}, {
+	timestamps: false
 })
 
 module.exports = Users;

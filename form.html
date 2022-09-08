@@ -11,6 +11,7 @@
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
 	<script src="/src/js/jquery-3.6.1.min.js"></script>
 
+
 </head>
 
 <body>
@@ -19,30 +20,23 @@
 			<h1 class="title-from">Регистрация</h1>
 			<div class="form-fields">
 				<div class="form-item">
-					<input class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text" required
-						pattern="[А-Яа-яЁё]">
+					<input class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text" required
-						pattern="[А-Яа-яЁё]">
+					<input class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_name" placeholder="Марка авто*" type="text" required
-						pattern=“[A-Za-z]”>
+					<input class="form-item__input" name="car_model_name" placeholder="Марка и модель авто*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_model_name" placeholder="Модель авто*" type="text" required
-						pattern=“[A-Za-z]”>
+					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="number">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text">
-				</div>
-				<div class="form-item">
-					<input class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text" required maxlength="9">
+					<input class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text" maxlength="9">
 				</div>
 				<div class="form-item">
 					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" type="text"
-						maxlength="4" pattern=“[A-Za-z]”>
+						maxlength="4">
 				</div>
 				<div class="form-item form-item-files">
 					<p>Фото вашего авто:</p>
@@ -54,55 +48,51 @@
 				<div class="form-note">
 					Поля со * обязательны к заполнению
 				</div>
+				<div class="form-submit">
+					<button id="submit" class="form-submit-btn">Отправить</button>
+				</div>
 			</div>
 		</form>
 
 	</div>
 	<script>
 		let tg = window.Telegram.WebApp;
+
 		tg.MainButton.show();
-		tg.MainButton.setText('Отправить');
+
+
+
 		let form = document.querySelector('#reg-form');
+		let sendBtn = document.querySelector('#send-btn');
+
 		let user_name = document.querySelector('input[name="user_name"]');
 		let user_surname = document.querySelector('input[name="user_surname"]');
-		let car_name = document.querySelector('input[name="car_name"]');
 		let car_model_name = document.querySelector('input[name="car_model_name"]');
 		let car_year = document.querySelector('input[name="car_year"]');
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
 		let user_id = tg.initDataUnsafe.user.id;
 
-		function validate_form() {
-			valid = true;
-
-			if (user_name.value == "") {
-				alert("Пожалуйста заполните поле 'Ваше имя'.");
-				valid = false;
-			}
-
-			return valid;
-		}
-
-
-		tg.onEvent('mainButtonClicked', () => {
-
-			user = {
-				chat_id: user_id,
-				user_name: user_name.value,
-				user_surname: user_surname.value,
-				car_name: car_name.value,
-				car_model_name: car_model_name.value,
-				car_year: car_year.value,
-				car_grz: car_grz.value,
-				car_engine_name: car_engine_name.value
-			}
-
-			/* tg.sendData(user); */
-			console.log(user);
-
+		Telegram.WebApp.onEvent('mainButtonClicked', function () {
+			tg.sendData(
+				`${user_name.value}\n${user_surname.value}`);
 			//при клике на основную кнопку отправляем данные в строковом виде
-			tg.close();
 		});
+
+
+		/* user = {
+			chat_id: user_id,
+			user_name: user_name.value,
+			user_surname: user_surname.value,
+			car_name: car_model_name.value,
+			car_year: car_year.value,
+			car_grz: car_grz.value,
+			car_engine_name: car_engine_name.value
+		} */
+
+		/* let year = getFullYear(); */
+		let date = new Date();
+		let year = date.getFullYear();
 
 	</script>
 </body>

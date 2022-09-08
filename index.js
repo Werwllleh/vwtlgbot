@@ -55,16 +55,20 @@ const start = async () => {
           return bot.sendMessage(
             chatId,
             `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\n\nПожалуйста зарегистрируйтесь`,
-            /* {
-              reply_markup: JSON.stringify({
-                inline_keyboard: [
-                  [{
-                    text: 'Зарегистрироваться',
-                    web_app: { url: 'https://cyan-monkeys-dream-85-234-6-154.loca.lt/form.html' }
-                  }],
+            {
+              reply_markup: {
+                keyboard: [
+                  [
+                    {
+                      text: "Регистрация",
+                      web_app: {
+                        url: "https://fruity-bags-grow-85-234-6-154.loca.lt/form.html",
+                      },
+                    },
+                  ],
                 ],
-              })
-            } */
+              },
+            }
           )
         }
       }
@@ -76,6 +80,11 @@ const start = async () => {
 
 
   user = {}
+
+  bot.on("web_app_data", async (msg) => {
+    console.log(msg);
+    bot.sendMessage(msg.chat.id, msg.web_app_data.data);
+  });
 
   bot.on('callback_query', async (msg) => {
     const data = msg.data;
