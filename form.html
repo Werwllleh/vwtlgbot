@@ -9,8 +9,6 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="src/css/form-style.css" />
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
-	<script src="/src/js/jquery-3.6.1.min.js"></script>
-
 
 </head>
 
@@ -20,19 +18,24 @@
 			<h1 class="title-from">Регистрация</h1>
 			<div class="form-fields">
 				<div class="form-item">
-					<input class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text">
+					<input class="form-item__input" onchange="changeFunc(this.value)" data-val="false" name="user_name"
+						placeholder="Ваше имя*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text">
+					<input class="form-item__input" onchange="changeFunc(this.value)" name="user_surname"
+						placeholder="Ваша фамилия*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_model_name" placeholder="Марка и модель авто*" type="text">
+					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_model_name"
+						placeholder="Марка и модель авто*" type="text">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="number">
+					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_year"
+						placeholder="Год выпуска авто*" type="number">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text" maxlength="9">
+					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_grz" placeholder="Номер авто*"
+						type="text" maxlength="9">
 				</div>
 				<div class="form-item">
 					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" type="text"
@@ -53,6 +56,7 @@
 
 	</div>
 	<script>
+
 		let tg = window.Telegram.WebApp;
 
 		tg.MainButton.show();
@@ -66,14 +70,31 @@
 		let car_year = document.querySelector('input[name="car_year"]');
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
-		let user_id = tg.initDataUnsafe.user.id;
+		// let user_id = tg.initDataUnsafe.user.id;
 
-		Telegram.WebApp.onEvent('mainButtonClicked', function () {
-			tg.sendData(
-				`${user_name.value}\n${user_surname.value}`);
-			//при клике на основную кнопку отправляем данные в строковом виде
-			tg.close();
-		});
+		function changeFunc(val) {
+			if (val.length != '' && val.length > 3) {
+				console.log('fff');
+			} else {
+				alert('Не хватает символов!');
+			}
+		}
+
+		tg.MainButton.disable()
+
+		if (user_name.value == '') {
+			tg.MainButton.disable()
+		} else {
+			tg.MainButton.enable()
+			Telegram.WebApp.onEvent('mainButtonClicked', function () {
+				tg.sendData(
+					`${user_name.value}\n${user_surname.value}`);
+				//при клике на основную кнопку отправляем данные в строковом виде
+				tg.close();
+			});
+		}
+
+
 
 
 		/* user = {

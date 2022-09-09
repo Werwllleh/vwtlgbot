@@ -2,7 +2,7 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { menu, back } = require('./keyboards');
+const { menu, reg, back } = require('./keyboards');
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
@@ -55,53 +55,23 @@ const start = async () => {
           return bot.sendMessage(
             chatId,
             `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\n\nПожалуйста зарегистрируйтесь`,
-            {
-              reply_markup: {
-                keyboard: [
-                  [
-                    {
-                      text: "Регистрация",
-                      web_app: {
-                        url: "https://fruity-bags-grow-85-234-6-154.loca.lt/form.html",
-                      },
-                    },
-                  ],
-                ],
-              },
-            }
+            reg
           )
         }
       }
       if (text === "/info") {
         return bot.sendMessage(
           chatId,
-          `Мы VAG клуб Чебоксар!\n\nЧто тебя интересует?`,
-          {
-            reply_markup: JSON.stringify({
-              // Добавляем кнопку регистрации
-              keyboard: [
-                [{ text: 'Показать меню', callback_data: "/back" }],
-              ],
-            })
-          }
+          `Мы VAG клуб Чебоксар!\nИ прочий текст`,
+          back
         )
       }
-      if (text === "Показать меню") {
+      if (text === "Показать меню" || text === "Вернуться к меню") {
         return (
           bot.sendMessage(
             chatId,
-            `а`,
-            {
-              reply_markup: JSON.stringify({
-                // Добавляем все кнопки
-                keyboard: [
-                  [{ text: 'Информация о клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
-                  [{ text: 'Наши авто', callback_data: "/ourcars" }, { text: 'Мероприятия', callback_data: "/events" }],
-                  [{ text: 'Поиск авто по ГРЗ', callback_data: "/searchcar" }, { text: 'Запросить помошь', callback_data: "/sos" }],
-                  [{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }]
-                ],
-              })
-            }
+            `Меню:`,
+            menu
           )
         )
       }
