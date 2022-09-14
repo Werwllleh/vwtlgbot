@@ -20,16 +20,26 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://loud-cities-stop-85-234-6-154.loca.lt/form.html",
+							url: "https://curvy-ways-tie-85-234-6-154.loca.lt/form.html",
 						},
 					},
 				],
 			],
-		},
+		}
+	},
+	partners_cat: {
+		reply_markup: {
+			keyboard: [
+				[{ text: 'Страхование авто', callback_data: "/car_insurance" }, { text: 'Кузовной ремонт', callback_data: "/car_repair" }],
+				[{ text: 'Стайлинг', callback_data: "/car_style" }, { text: 'Автохимия', callback_data: "/car_chemistry" }],
+				[{ text: 'Выхлоп', callback_data: "/car_exhaust" }, { text: 'Обслуживание кондиционера', callback_data: "/car_conditioner" }],
+				[{ text: 'Покраска', callback_data: "/car_painting" }, { text: 'Шумоизоляция авто', callback_data: "/car_insulation" }],
+				[{ text: 'Вернуться к меню', callback_data: "/back" }],
+			],
+		}
 	},
 	back: {
 		reply_markup: {
-			// Добавляем кнопку регистрации
 			keyboard: [
 				[{ text: 'Вернуться к меню', callback_data: "/back" }],
 			],
