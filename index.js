@@ -106,6 +106,7 @@ const start = async () => {
 
   bot.on("web_app_data", async (msg) => {
     bot.sendMessage(msg.chat.id, msg.web_app_data.data);
+    console.log(msg.web_app_data.data);
   });
 
   bot.on('callback_query', async (msg) => {

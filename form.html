@@ -72,10 +72,10 @@
 		inputChange = () => {
 			inputs.forEach(input => {
 				input.addEventListener('change', inputChange);
-				if (input.value == '') {
-					tg.MainButton.isVisible = false;
-				} else {
+				if (input.value != '' && input.value.length >= 4) {
 					tg.MainButton.isVisible = true;
+				} else {
+					tg.MainButton.isVisible = false;
 				}
 				Telegram.WebApp.onEvent('mainButtonClicked', function () {
 					tg.sendData(
@@ -97,7 +97,9 @@
 			car_year: car_year.value,
 			car_grz: car_grz.value,
 			car_engine_name: car_engine_name.value
-		} */
+		}
+
+		console.log(user); */
 
 
 		/* inputs.forEach(function (el) {
