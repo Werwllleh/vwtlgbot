@@ -2,11 +2,20 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { menu, reg, partners_cat, back } = require('./keyboards');
+const { menu, reg, partners_cat, searchcarAgain, back } = require('./keyboards');
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
+
+const chats = {}
+
+const startGame = async (chatId) => {
+  await bot.sendMessage(chatId, `Напиши только цифры или ГРЗ полностью`, searchcarAgain);
+  // const randomNumber = Math.floor(Math.random() * 10)
+  // chats[chatId] = randomNumber;
+  //await bot.sendMessage(chatId, 'Отгадывай');
+}
 
 const start = async () => {
 
@@ -84,14 +93,8 @@ const start = async () => {
           )
         )
       }
-      if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
-        return (
-          bot.sendMessage(
-            chatId,
-            `Введите только цифры или ГРЗ полностью`,
-            back
-          )
-        )
+      if (text === "/searchcar" || text === "Поиск авто по ГРЗ" || text === "Искать авто еще раз") {
+        return startGame(chatId)
       }
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");

@@ -18,34 +18,33 @@
 			<h1 class="title-from">Регистрация</h1>
 			<div class="form-fields">
 				<div class="form-item">
-					<input class="form-item__input" onchange="changeFunc(this.value)" data-val="false" name="user_name"
-						placeholder="Ваше имя*" type="text">
+					<input id="req-field" class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text" value="">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" onchange="changeFunc(this.value)" name="user_surname"
-						placeholder="Ваша фамилия*" type="text">
+					<input id="req-field" class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text"
+						value="">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_model_name"
-						placeholder="Марка и модель авто*" type="text">
+					<input id="req-field" class="form-item__input" name="car_model_name" placeholder="Марка и модель авто*"
+						type="text" value="">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_year"
-						placeholder="Год выпуска авто*" type="number">
+					<input id="req-field" class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text"
+						value="">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" onchange="changeFunc(this.value)" name="car_grz" placeholder="Номер авто*"
-						type="text" maxlength="9">
+					<input id="req-field" class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text"
+						maxlength="9" value="">
 				</div>
 				<div class="form-item">
 					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" type="text"
 						maxlength="4">
 				</div>
-				<div class="form-item form-item-files">
+				<!-- <div class="form-item form-item-files">
 					<p>Фото вашего авто:</p>
 					<input class="form-item__input form-item-files-input" name="car_photo" type="file" multiple
 						accept="image/jpeg,image/png,image/jpg, impage/HEIC">
-				</div>
+				</div> -->
 			</div>
 			<div class="form-footer">
 				<div class="form-note">
@@ -59,41 +58,36 @@
 
 		let tg = window.Telegram.WebApp;
 
-		tg.MainButton.show();
-
 		let form = document.querySelector('#reg-form');
 		let sendBtn = document.querySelector('#send-btn');
-
 		let user_name = document.querySelector('input[name="user_name"]');
 		let user_surname = document.querySelector('input[name="user_surname"]');
 		let car_model_name = document.querySelector('input[name="car_model_name"]');
 		let car_year = document.querySelector('input[name="car_year"]');
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
-		// let user_id = tg.initDataUnsafe.user.id;
 
-		function changeFunc(val) {
-			if (val.length != '' && val.length > 3) {
-				console.log('fff');
-			} else {
-				alert('Не хватает символов!');
-			}
-		}
+		var inputs = document.querySelectorAll('#req-field');
 
-		if (user_name.value == '') {
-			tg.MainButton.disable()
-		} else {
-			tg.MainButton.enable()
-			Telegram.WebApp.onEvent('mainButtonClicked', function () {
-				tg.sendData(
-					`${user_name.value}\n${user_surname.value}`);
-				//при клике на основную кнопку отправляем данные в строковом виде
-				tg.close();
+		inputChange = () => {
+			inputs.forEach(input => {
+				input.addEventListener('change', inputChange);
+				if (input.value == '') {
+					tg.MainButton.isVisible = false;
+				} else {
+					tg.MainButton.isVisible = true;
+				}
+				Telegram.WebApp.onEvent('mainButtonClicked', function () {
+					tg.sendData(
+						`Ваши данные:\n${user_name.value}\n${user_surname.value}\n${car_model_name.value}\n${car_year.value}\n${car_grz.value}`
+					);
+					//при клике на основную кнопку отправляем данные в строковом виде
+					tg.close();
+				});
 			});
 		}
 
-
-
+		inputChange();
 
 		/* user = {
 			chat_id: user_id,
@@ -104,6 +98,21 @@
 			car_grz: car_grz.value,
 			car_engine_name: car_engine_name.value
 		} */
+
+
+		/* inputs.forEach(function (el) {
+			el.addEventListener('input', checkInputs, false);
+		});
+
+		function checkInputs() {
+			var empty = inputs.filter(function (el) {
+				return el.value.trim() === '';
+			}).length;
+			// button.disabled = empty !== 0;
+			tg.MainButton.isVisible = true;
+		}
+
+		checkInputs(); */
 
 		/* let year = getFullYear(); */
 		let date = new Date();
