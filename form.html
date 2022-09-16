@@ -134,7 +134,7 @@
 
 		checkInputs = () => {
 			inputs.forEach(input => {
-				if (input.getAttribute('data-val') == true) {
+				if (input.getAttribute('data-val') == 'true') {
 					tg.MainButton.isVisible = true;
 					console.log('Все заполнено');
 				} else {
