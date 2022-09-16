@@ -30,15 +30,15 @@
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text"
-						value="">
+						maxlength="4" value="">
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text"
 						maxlength="9" value="">
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" type="text"
-						maxlength="4">
+					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" data-val="true"
+						type="text" maxlength="4">
 				</div>
 				<!-- <div class="form-item form-item-files">
 					<p>Фото вашего авто:</p>
@@ -56,10 +56,6 @@
 	</div>
 	<script>
 
-		let tg = window.Telegram.WebApp;
-
-		let form = document.querySelector('#reg-form');
-		let sendBtn = document.querySelector('#send-btn');
 		let user_name = document.querySelector('input[name="user_name"]');
 		let user_surname = document.querySelector('input[name="user_surname"]');
 		let car_model_name = document.querySelector('input[name="car_model_name"]');
@@ -67,27 +63,95 @@
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
 
-		var inputs = document.querySelectorAll('#req-field');
+		let tg = window.Telegram.WebApp;
 
-		inputChange = () => {
+		user_name.addEventListener('keyup', function () {
+			if (/^[а-яА-Я]+$/.test(user_name.value) && user_name.value.length >= 4) {
+				user_name.setAttribute('data-val', true)
+				user_name.style.backgroundColor = 'white'
+			} else {
+				user_name.setAttribute('data-val', false)
+				user_name.style.backgroundColor = '#e86f75'
+			}
+		})
+
+		user_surname.addEventListener('keyup', function () {
+			if (/^[а-яА-Я]+$/.test(user_surname.value) && user_surname.value.length >= 3) {
+				user_surname.setAttribute('data-val', true)
+				user_surname.style.backgroundColor = 'white'
+			} else {
+				user_surname.setAttribute('data-val', false)
+				user_surname.style.backgroundColor = '#e86f75'
+			}
+		})
+
+		car_model_name.addEventListener('keyup', function () {
+			if (/^[a-zA-Z\s]+\s[a-zA-Z\s]+$/.test(car_model_name.value)) {
+				car_model_name.setAttribute('data-val', true)
+				car_model_name.style.backgroundColor = 'white'
+			} else {
+				// alert('Введите данные на английском')
+				car_model_name.style.backgroundColor = '#e86f75'
+				car_model_name.setAttribute('data-val', false)
+			}
+		})
+
+		let date = new Date();
+		let year = date.getFullYear();
+
+		car_year.addEventListener('keyup', function () {
+			if (/^\d+$/.test(car_year.value) && car_year.value >= 1900 && car_year.value <= year) {
+				car_year.setAttribute('data-val', true)
+				car_year.style.backgroundColor = 'white'
+			} else {
+				// alert('Введите данные на английском')
+				car_year.style.backgroundColor = '#e86f75'
+				car_year.setAttribute('data-val', false)
+			}
+		})
+
+		car_grz.addEventListener('keyup', function () {
+			if (/^[АВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[АВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(car_grz.value)) {
+				car_grz.setAttribute('data-val', true)
+				car_grz.style.backgroundColor = 'white'
+			} else {
+				// alert('Введите данные на английском')
+				car_grz.style.backgroundColor = '#e86f75'
+				car_grz.setAttribute('data-val', false)
+			}
+		})
+
+		car_engine_name.addEventListener('keyup', function () {
+			if (/^[A-Z]+$/.test(car_engine_name.value)) {
+				car_engine_name.style.backgroundColor = 'white'
+			} else {
+				// alert('Введите данные на английском')
+				car_engine_name.style.backgroundColor = '#e86f75'
+			}
+		})
+
+		let inputs = document.querySelectorAll('#req-field');
+
+		checkInputs = () => {
 			inputs.forEach(input => {
-				input.addEventListener('change', inputChange);
-				if (input.value != '' && input.value.length >= 4) {
+				if (input.getAttribute('data-val') == true) {
 					tg.MainButton.isVisible = true;
+					console.log('Все заполнено');
 				} else {
 					tg.MainButton.isVisible = false;
+					console.log('Какое-то поле не заполнено');
 				}
 				Telegram.WebApp.onEvent('mainButtonClicked', function () {
 					tg.sendData(
-						`Ваши данные:\n${user_name.value}\n${user_surname.value}\n${car_model_name.value}\n${car_year.value}\n${car_grz.value}`
+						`Добро пожаловать в Vag клуб`
+						// `Ваши данные:\n${user_name.value}\n${user_surname.value}\n${car_model_name.value}\n${car_year.value}\n${car_grz.value}`
 					);
-					//при клике на основную кнопку отправляем данные в строковом виде
 					tg.close();
 				});
 			});
 		}
 
-		inputChange();
+		setInterval(checkInputs, 2000);
 
 		/* user = {
 			chat_id: user_id,
@@ -101,24 +165,8 @@
 
 		console.log(user); */
 
-
-		/* inputs.forEach(function (el) {
-			el.addEventListener('input', checkInputs, false);
-		});
-
-		function checkInputs() {
-			var empty = inputs.filter(function (el) {
-				return el.value.trim() === '';
-			}).length;
-			// button.disabled = empty !== 0;
-			tg.MainButton.isVisible = true;
-		}
-
-		checkInputs(); */
-
 		/* let year = getFullYear(); */
-		let date = new Date();
-		let year = date.getFullYear();
+
 
 	</script>
 </body>
