@@ -14,7 +14,7 @@ const Users = sequelize.define('user', {
 	userName: { type: DataTypes.STRING, allowNull: false },
 	userSurName: { type: DataTypes.STRING, allowNull: false },
 	carModel: { type: DataTypes.STRING, allowNull: false },
-	carYear: { type: DataTypes.DATE, allowNull: false },
+	carYear: { type: DataTypes.INTEGER, allowNull: false },
 	carGRZ: { type: DataTypes.STRING, unique: true, allowNull: false },
 	carEngineModel: { type: DataTypes.STRING, allowNull: false },
 }, {

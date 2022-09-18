@@ -65,6 +65,9 @@
 
 		let tg = window.Telegram.WebApp;
 
+		tg.MainButton.show();
+		tg.MainButton.disable();
+
 		user_name.addEventListener('keyup', function () {
 			if (/^[а-яА-Я]+$/.test(user_name.value) && user_name.value.length >= 4) {
 				user_name.setAttribute('data-val', true)
@@ -135,38 +138,24 @@
 		checkInputs = () => {
 			inputs.forEach(input => {
 				if (input.getAttribute('data-val') == 'true') {
-					tg.MainButton.isVisible = true;
+					tg.MainButton.enable();
 					console.log('Все заполнено');
 				} else {
-					tg.MainButton.isVisible = false;
+					tg.MainButton.disable();
 					console.log('Какое-то поле не заполнено');
 				}
 				Telegram.WebApp.onEvent('mainButtonClicked', function () {
 					tg.sendData(
-						`Добро пожаловать в Vag клуб`
-						// `Ваши данные:\n${user_name.value}\n${user_surname.value}\n${car_model_name.value}\n${car_year.value}\n${car_grz.value}`
+						`${user_name.value},${user_surname.value},${car_model_name.value},${car_year.value},${car_grz.value},${car_engine_name.value}`
 					);
-					tg.close();
+					// tg.close();
 				});
 			});
 		}
 
 		setInterval(checkInputs, 2000);
 
-		/* user = {
-			chat_id: user_id,
-			user_name: user_name.value,
-			user_surname: user_surname.value,
-			car_name: car_model_name.value,
-			car_year: car_year.value,
-			car_grz: car_grz.value,
-			car_engine_name: car_engine_name.value
-		}
-
-		console.log(user); */
-
-		/* let year = getFullYear(); */
-
+		
 
 	</script>
 </body>

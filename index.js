@@ -8,7 +8,6 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
-const chats = {}
 
 const startGame = async (chatId) => {
   await bot.sendMessage(chatId, `Напиши только цифры или ГРЗ полностью`, searchcarAgain);
@@ -50,7 +49,6 @@ const start = async () => {
 
       if (text === "/start") {
         const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
-
         if (userChatId) {
           return (
             bot.sendMessage(
@@ -101,12 +99,29 @@ const start = async () => {
     }
   });
 
-
-  user = {}
-
   bot.on("web_app_data", async (msg) => {
-    bot.sendMessage(msg.chat.id, msg.web_app_data.data);
-    console.log(msg.web_app_data.data);
+    // bot.sendMessage(msg.chat.id, msg.web_app_data.data);
+    let strMsg = msg.web_app_data.data;
+    let arrData = strMsg.split(',');
+
+    console.log(arrData);
+    return (
+      UsersModel.create({
+        chatId: msg.chat.id,
+        userName: arrData[0],
+        userSurName: arrData[1],
+        carModel: arrData[2],
+        carYear: arrData[3],
+        carGRZ: arrData[4],
+        carEngineModel: arrData[5]
+      }),
+      bot.sendMessage(
+        msg.chat.id,
+        `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        menu
+      )
+    )
+
   });
 
   bot.on('callback_query', async (msg) => {

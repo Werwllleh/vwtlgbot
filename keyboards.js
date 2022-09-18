@@ -20,7 +20,7 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://eager-beers-nail-85-234-6-154.loca.lt/form.html",
+							url: "https://slimy-cobras-flow-46-187-34-23.loca.lt/form.html",
 						},
 					},
 				],
