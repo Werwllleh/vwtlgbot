@@ -11,11 +11,24 @@ const bot = new TelegramApi(token, { polling: true });
 
 const searchCar = async (chatId) => {
   await bot.sendMessage(chatId, `Введи номер автомобиля латинскими буквами в формате X999XX99/999`, back);
-  await bot.on('message', async (msg) => {
-    let queryGrz = String(msg.text).toUpperCase();
-    const carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
-  })
-  console.log(carNum);
+  return (
+    bot.on('message', async (msg) => {
+      queryGrz = String(msg.text).toUpperCase();
+      const carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
+      if (carNum != null) {
+        bot.sendMessage(
+          chatId,
+          `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`
+        )
+      } else {
+        bot.sendMessage(
+          chatId,
+          `Автомобиль с таким номером не найден`
+        )
+      }
+    })
+  )
+
 }
 
 /* if (queryGrz === carNum.carGRZ) {
