@@ -2,22 +2,46 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { menu, reg, partners_cat, searchcarAgain, back } = require('./keyboards');
+const { menu, reg, partners_cat, back } = require('./keyboards');
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
 
-const startGame = async (chatId) => {
-  await bot.sendMessage(chatId, `Напиши только цифры или ГРЗ полностью`, searchcarAgain);
-  // const randomNumber = Math.floor(Math.random() * 10)
-  // chats[chatId] = randomNumber;
-  //await bot.sendMessage(chatId, 'Отгадывай');
+const searchCar = async (chatId) => {
+  await bot.sendMessage(chatId, `Введи номер автомобиля латинскими буквами в формате X999XX99/999`, back);
+  await bot.on('message', async (msg) => {
+    let queryGrz = String(msg.text).toUpperCase();
+    const carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
+  })
+  console.log(carNum);
 }
 
-const start = async () => {
+/* if (queryGrz === carNum.carGRZ) {
+  bot.sendMessage(
+    chatId,
+    `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`
+  )
+} else {
+  bot.sendMessage(
+    chatId,
+    `Автомобиль с таким номером не найден`
+  )
+} */
 
+/* bot.setMyCommands([
+              { command: "/info", description: "Информация о клубе" },
+              { command: "/partners", description: "Партнеры клуба" },
+              { command: "/ourcars", description: "Наши авто" },
+              { command: "/events", description: "Мероприятия" },
+              { command: "/searchcar", description: "Поиск авто по ГРЗ" },
+              { command: "/sos", description: "Запросить помошь" },
+              { command: "/donate", description: "Донат на поддержку клуба" },
+              { command: "/salecars", description: "Продажа авто" }
+            ]) */
+
+const start = async () => {
   try {
     await sequelize.authenticate()
     await sequelize.sync()
@@ -25,28 +49,13 @@ const start = async () => {
   } catch (e) {
     console.log('Подключение к бд сломалось');
     console.log(e);
-
   }
-
-  bot.setMyCommands([
-    { command: "/info", description: "Информация о клубе" },
-    { command: "/partners", description: "Партнеры клуба" },
-    { command: "/ourcars", description: "Наши авто" },
-    { command: "/events", description: "Мероприятия" },
-    { command: "/searchcar", description: "Поиск авто по ГРЗ" },
-    { command: "/sos", description: "Запросить помошь" },
-    { command: "/donate", description: "Донат на поддержку клуба" },
-    { command: "/salecars", description: "Продажа авто" }
-  ]);
-
 
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
-
     try {
-
       if (text === "/start") {
         const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
         if (userChatId) {
@@ -61,7 +70,7 @@ const start = async () => {
           // return UsersModel.create({ chatId });
           return bot.sendMessage(
             chatId,
-            `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\n\nПожалуйста зарегистрируйтесь`,
+            `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста зарегистрируйтесь`,
             reg
           )
         }
@@ -92,7 +101,7 @@ const start = async () => {
         )
       }
       if (text === "/searchcar" || text === "Поиск авто по ГРЗ" || text === "Искать авто еще раз") {
-        return startGame(chatId)
+        return searchCar(chatId)
       }
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
@@ -104,24 +113,26 @@ const start = async () => {
     let strMsg = msg.web_app_data.data;
     let arrData = strMsg.split(',');
 
-    console.log(arrData);
+    let name = arrData[0].trim();
+    let surname = arrData[1].trim();
+    let car = arrData[2].trimEnd();
+
     return (
       UsersModel.create({
         chatId: msg.chat.id,
-        userName: arrData[0],
-        userSurName: arrData[1],
-        carModel: arrData[2],
+        userName: name[0].toUpperCase() + name.substring(1),
+        userSurName: surname[0].toUpperCase() + surname.substring(1),
+        carModel: car.toLowerCase(),
         carYear: arrData[3],
-        carGRZ: arrData[4],
-        carEngineModel: arrData[5]
+        carGRZ: arrData[4].toUpperCase(),
+        carEngineModel: arrData[5].toUpperCase()
       }),
       bot.sendMessage(
         msg.chat.id,
-        `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
         menu
       )
     )
-
   });
 
   bot.on('callback_query', async (msg) => {

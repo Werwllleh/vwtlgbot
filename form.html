@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Document</title>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="src/css/form-style.css" />
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -19,14 +19,17 @@
 			<div class="form-fields">
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text" value="">
+					<p class="fild-note">русскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="user_surname" placeholder="Ваша фамилия*" type="text"
 						value="">
+					<p class="fild-note">русскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_model_name" placeholder="Марка и модель авто*"
 						type="text" value="">
+					<p class="fild-note">латинскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="text"
@@ -35,10 +38,12 @@
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text"
 						maxlength="9" value="">
+					<p class="fild-note">в формате <span>X999XX99</span> или <span>X999XX999</span></p>
 				</div>
 				<div class="form-item">
 					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" data-val="true"
 						type="text" maxlength="4">
+					<p class="fild-note">в формате <span>XXXX</span></p>
 				</div>
 				<!-- <div class="form-item form-item-files">
 					<p>Фото вашего авто:</p>
@@ -65,11 +70,11 @@
 
 		let tg = window.Telegram.WebApp;
 
-		tg.MainButton.show();
-		tg.MainButton.disable();
+		tg.MainButton.text = 'Отправить';
+		tg.MainButton.hide();
 
 		user_name.addEventListener('keyup', function () {
-			if (/^[а-яА-Я]+$/.test(user_name.value) && user_name.value.length >= 4) {
+			if (/^[а-яА-Я\s]+$/.test(user_name.value) && user_name.value.length >= 4) {
 				user_name.setAttribute('data-val', true)
 				user_name.style.backgroundColor = 'white'
 			} else {
@@ -79,7 +84,7 @@
 		})
 
 		user_surname.addEventListener('keyup', function () {
-			if (/^[а-яА-Я]+$/.test(user_surname.value) && user_surname.value.length >= 3) {
+			if (/^[а-яА-Я\s]+$/.test(user_surname.value) && user_surname.value.length >= 3) {
 				user_surname.setAttribute('data-val', true)
 				user_surname.style.backgroundColor = 'white'
 			} else {
@@ -89,7 +94,7 @@
 		})
 
 		car_model_name.addEventListener('keyup', function () {
-			if (/^[a-zA-Z\s]+\s[a-zA-Z\s]+$/.test(car_model_name.value)) {
+			if (/^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$/.test(car_model_name.value)) {
 				car_model_name.setAttribute('data-val', true)
 				car_model_name.style.backgroundColor = 'white'
 			} else {
@@ -125,7 +130,7 @@
 		})
 
 		car_engine_name.addEventListener('keyup', function () {
-			if (/^[A-Z]+$/.test(car_engine_name.value)) {
+			if (/^[a-zA-Z]+$/.test(car_engine_name.value)) {
 				car_engine_name.style.backgroundColor = 'white'
 			} else {
 				// alert('Введите данные на английском')
@@ -138,10 +143,10 @@
 		checkInputs = () => {
 			inputs.forEach(input => {
 				if (input.getAttribute('data-val') == 'true') {
-					tg.MainButton.enable();
+					tg.MainButton.show();
 					console.log('Все заполнено');
 				} else {
-					tg.MainButton.disable();
+					tg.MainButton.hide();
 					console.log('Какое-то поле не заполнено');
 				}
 				Telegram.WebApp.onEvent('mainButtonClicked', function () {
@@ -155,7 +160,7 @@
 
 		setInterval(checkInputs, 2000);
 
-		
+
 
 	</script>
 </body>

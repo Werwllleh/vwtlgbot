@@ -145,6 +145,15 @@ body {
 	margin: 0 15px 0 0;
 }
 
+.fild-note {
+	padding: 0 7px;
+	font-size: 13px;
+}
+
+.fild-note span{
+	color: rgb(4, 3, 66);
+	font-weight: 500;
+}
 
 .form-submit-btn {
 	cursor: pointer;

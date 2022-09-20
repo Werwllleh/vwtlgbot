@@ -20,7 +20,7 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://slimy-cobras-flow-46-187-34-23.loca.lt/form.html",
+							url: "https://puny-pens-relax-85-234-6-154.loca.lt/form.html",
 						},
 					},
 				],
@@ -34,14 +34,6 @@ module.exports = {
 				[{ text: 'Стайлинг', callback_data: "/car_style" }, { text: 'Автохимия', callback_data: "/car_chemistry" }],
 				[{ text: 'Выхлоп', callback_data: "/car_exhaust" }, { text: 'Обслуживание кондиционера', callback_data: "/car_conditioner" }],
 				[{ text: 'Покраска', callback_data: "/car_painting" }, { text: 'Шумоизоляция авто', callback_data: "/car_insulation" }],
-				[{ text: 'Вернуться к меню', callback_data: "/back" }],
-			],
-		}
-	},
-	searchcarAgain: {
-		reply_markup: {
-			keyboard: [
-				[{ text: 'Искать авто еще раз', callback_data: "/searchcar" }],
 				[{ text: 'Вернуться к меню', callback_data: "/back" }],
 			],
 		}
