@@ -20,7 +20,7 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://puny-pens-relax-85-234-6-154.loca.lt/form.html",
+							url: "https://metal-zebras-knock-85-234-6-154.loca.lt/form.html",
 						},
 					},
 				],

@@ -8,27 +8,13 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
-
 const searchCar = async (chatId) => {
-  await bot.sendMessage(chatId, `Введи номер автомобиля латинскими буквами в формате X999XX99/999`, back);
-  return (
-    bot.on('message', async (msg) => {
-      queryGrz = String(msg.text).toUpperCase();
-      const carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
-      if (carNum != null) {
-        bot.sendMessage(
-          chatId,
-          `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`
-        )
-      } else {
-        bot.sendMessage(
-          chatId,
-          `Автомобиль с таким номером не найден`
-        )
-      }
-    })
-  )
-
+  await bot.sendMessage(chatId, `Введи номер автомобиля латинскими буквами в формате X999XX99/999`, back)
+  return bot.on('message', async (msg) => {
+    queryGrz = String(msg.text).toUpperCase();
+    carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
+    console.log(msg.from.is_bot);
+  })
 }
 
 /* if (queryGrz === carNum.carGRZ) {
@@ -113,8 +99,13 @@ const start = async () => {
           )
         )
       }
-      if (text === "/searchcar" || text === "Поиск авто по ГРЗ" || text === "Искать авто еще раз") {
-        return searchCar(chatId)
+      if (text === "/searchcar" || text === "Поиск авто по ГРЗ" || text === "Искать еще раз") {
+        return (
+          bot.sendMessage(
+            chatId,
+            `Введи номер автомобиля латинскими буквами в формате X999XX99/999`
+          )
+        )
       }
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
@@ -152,8 +143,18 @@ const start = async () => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
 
-    // if (data === '/back') {}
-
+    if (data === '/back') {
+      return (
+        bot.sendMessage(
+          chatId,
+          `Что вас интересует?`,
+          menu
+        )
+      )
+    }
+    if (data === '/searchAgain') {
+      return searchCar(chatId)
+    }
   });
 };
 
