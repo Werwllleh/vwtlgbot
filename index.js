@@ -9,36 +9,25 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 const bot = new TelegramApi(token, { polling: true });
 
 const searchCar = async (chatId) => {
-  await bot.sendMessage(chatId, `Введи номер автомобиля латинскими буквами в формате X999XX99/999`, back)
-  return bot.on('message', async (msg) => {
-    queryGrz = String(msg.text).toUpperCase();
-    carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
-    console.log(msg.from.is_bot);
+  return bot.addListener('message', async (msg) => {
+    if (/^[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
+      queryGrz = String(msg.text).toUpperCase();
+      carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
+      return (
+        bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`),
+        bot.removeListener("message"),
+        start()
+      )
+    } else {
+      return (
+        bot.sendMessage(chatId, `Не найдено`),
+        bot.removeListener("message"),
+        start()
+      )
+    }
   })
 }
 
-/* if (queryGrz === carNum.carGRZ) {
-  bot.sendMessage(
-    chatId,
-    `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`
-  )
-} else {
-  bot.sendMessage(
-    chatId,
-    `Автомобиль с таким номером не найден`
-  )
-} */
-
-/* bot.setMyCommands([
-              { command: "/info", description: "Информация о клубе" },
-              { command: "/partners", description: "Партнеры клуба" },
-              { command: "/ourcars", description: "Наши авто" },
-              { command: "/events", description: "Мероприятия" },
-              { command: "/searchcar", description: "Поиск авто по ГРЗ" },
-              { command: "/sos", description: "Запросить помошь" },
-              { command: "/donate", description: "Донат на поддержку клуба" },
-              { command: "/salecars", description: "Продажа авто" }
-            ]) */
 
 const start = async () => {
   try {
@@ -99,13 +88,9 @@ const start = async () => {
           )
         )
       }
-      if (text === "/searchcar" || text === "Поиск авто по ГРЗ" || text === "Искать еще раз") {
-        return (
-          bot.sendMessage(
-            chatId,
-            `Введи номер автомобиля латинскими буквами в формате X999XX99/999`
-          )
-        )
+      if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
+        await bot.sendMessage(chatId, "Тебе нужно будет ввести номер в формате X999XX99/999 используя латинские буквы");
+        return searchCar(chatId)
       }
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
@@ -143,19 +128,10 @@ const start = async () => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
 
-    if (data === '/back') {
-      return (
-        bot.sendMessage(
-          chatId,
-          `Что вас интересует?`,
-          menu
-        )
-      )
-    }
-    if (data === '/searchAgain') {
-      return searchCar(chatId)
-    }
+    // if (data === '/back') {}
   });
 };
 
+
 start();
+
