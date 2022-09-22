@@ -44,8 +44,9 @@ const continueSos = async (chatId) => {
   return bot.addListener('message', async (msg) => {
     if (msg.text != '') {
 
-      let arrPeople = await UsersModel.findAll({ chatId: chatId });
-      console.log(JSON.stringify(arrPeople));
+      let arrPeople = await Users.findAll();
+
+      console.log(arrPeople);
 
       /* return (
         bot.sendMessage(chatId, `${arrPeople.chatId}`),
