@@ -8,6 +8,17 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
+bot.setMyCommands([
+  { command: "/info", description: "Информация о клубе" },
+  { command: "/partners", description: "Партнеры клуба" },
+  { command: "/ourcars", description: "Наши авто" },
+  { command: "/events", description: "Мероприятия" },
+  { command: "/searchcar", description: "Поиск авто по ГРЗ" },
+  { command: "/sos", description: "Запросить помошь" },
+  { command: "/donate", description: "Донат на поддержку клуба" },
+  { command: "/salecars", description: "Продажа авто" }
+])
+
 const searchCar = async (chatId) => {
   return bot.addListener('message', async (msg) => {
     if (/^[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
@@ -64,18 +75,28 @@ const start = async () => {
         }
       }
       if (text === "/info" || text === "Информация о клубе") {
-        return bot.sendMessage(
+        await bot.sendPhoto(
           chatId,
-          `Мы VAG клуб Чебоксар!\nИ прочий текст`,
-          back
+          'src/img/logo.jpeg'
         )
-      }
-      if (text === "Показать меню" || text === "Вернуться к меню") {
         return (
           bot.sendMessage(
             chatId,
-            `Что вас интересует?`,
-            menu
+            `Мы VAG клуб Чебоксар!\nИ прочий текст`,
+            back
+          )
+        )
+      }
+      if (text === "/events" || text === "Мероприятия") {
+        await bot.sendPhoto(
+          chatId,
+          'src/img/event1.jpeg'
+        )
+        return (
+          bot.sendMessage(
+            chatId,
+            `Ближайшая запланированная встреча состоится 1 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`,
+            back
           )
         )
       }
@@ -89,8 +110,17 @@ const start = async () => {
         )
       }
       if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
-        await bot.sendMessage(chatId, "Тебе нужно будет ввести номер в формате X999XX99/999 используя латинские буквы");
+        await bot.sendMessage(chatId, "Введи номер авто в формате X999XX99/999 используя латинские буквы");
         return searchCar(chatId)
+      }
+      if (text === "Показать меню" || text === "Вернуться к меню") {
+        return (
+          bot.sendMessage(
+            chatId,
+            `Что вас интересует?`,
+            menu
+          )
+        )
       }
     } catch (e) {
       return bot.sendMessage(chatId, "Произошла какая-то ошибка");
