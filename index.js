@@ -3,6 +3,7 @@ const TelegramApi = require("node-telegram-bot-api");
 const sequelize = require('./db');
 const UsersModel = require('./models');
 const { menu, reg, partners_cat, back } = require('./keyboards');
+const Users = require("./models");
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
@@ -39,6 +40,27 @@ const searchCar = async (chatId) => {
   })
 }
 
+const continueSos = async (chatId) => {
+  return bot.addListener('message', async (msg) => {
+    if (msg.text != '') {
+
+      let arrPeople = await UsersModel.findAll({ chatId: chatId });
+      console.log(JSON.stringify(arrPeople));
+
+      /* return (
+        bot.sendMessage(chatId, `${arrPeople.chatId}`),
+        bot.removeListener("message"),
+        start()
+      ) */
+    } else {
+      /* return (
+        bot.sendMessage(chatId, `Не найдено`),
+        bot.removeListener("message"),
+        start()
+      ) */
+    }
+  })
+}
 
 const start = async () => {
   try {
@@ -113,7 +135,25 @@ const start = async () => {
         await bot.sendMessage(chatId, "Введи номер авто в формате X999XX99/999 используя латинские буквы");
         return searchCar(chatId)
       }
-      if (text === "Показать меню" || text === "Вернуться к меню") {
+      if (text === "/sos" || text === "Запросить помощь") {
+        return bot.sendMessage(
+          chatId,
+          "Надеюсь вы не шутите, ведь ваша просьба прилетит всем зарегистрированным участникам сообщества",
+          {
+            reply_markup: {
+              keyboard: [
+                [{ text: 'Я передумал и хочу вернуться в меню', callback_data: "/leaveSos" }],
+                [{ text: 'Все серьезно, у меня беда', callback_data: "/continueSos" }],
+              ],
+            }
+          }
+        )
+      }
+      if (text === "Все серьезно, у меня беда") {
+        await bot.sendMessage(chatId, "Коротко опишите вашу проблему, сообщите адрес, где вы находитесь, напишите номер вашего телефона или оставьте ссылку на ваш телеграмм-профиль")
+        return continueSos(chatId)
+      }
+      if (text === "Показать меню" || text === "Вернуться к меню" || text === "Я передумал и хочу вернуться в меню") {
         return (
           bot.sendMessage(
             chatId,
@@ -158,7 +198,15 @@ const start = async () => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
 
-    // if (data === '/back') {}
+    if (data === '/back') {
+      return (
+        bot.sendMessage(
+          chatId,
+          `Что вас интересует?`,
+          menu
+        )
+      )
+    }
   });
 };
 
