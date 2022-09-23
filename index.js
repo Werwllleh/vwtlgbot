@@ -21,6 +21,11 @@ const searchCar = async (chatId) => {
         bot.removeListener("message"),
         start()
       )
+    } else if (msg.text === 'Вернуться к меню') {
+      return (
+        bot.removeListener("message"),
+        start()
+      )
     } else {
       return (
         bot.sendMessage(chatId, `Не найдено`),
@@ -35,24 +40,20 @@ const continueSos = async (chatId) => {
   return bot.addListener('message', async (msg) => {
     if (msg.text.length >= 25) {
 
-      let allUsers = await Users.findAll({
-        attributes: ['chatId', 'userName', 'userSurName'],
+      let allUsersId = await Users.findAll({
+        attributes: ['chatId'],
       });
 
-      allUsers.forEach(async (user) => {
-        console.log(user.chatId);
-        if (user.chatId != chatId) {
-          await bot.sendMessage(user.chatId, `${user.userName} ${user.userSurName} прислал(а) просьбу о помощи\nНапиши ей/ему скорее!`)
+      console.log(msg);
+
+      allUsersId.forEach(async (userId) => {
+
+        if (userId.chatId != chatId) {
+          await bot.sendMessage(userId.chatId, `Пришла просьба о помощи!\nНапиши ей/ему скорее!`)
           return bot.sendMessage(
-            user.chatId,
+            userId.chatId,
             msg.text,
-            {
-              reply_markup: {
-                keyboard: [
-                  [{ text: `${user.userName}`, url: `tg://user?id=${chatId}` }],
-                ],
-              }
-            }
+            back
           )
         }
       })
@@ -147,7 +148,7 @@ const start = async () => {
         )
       }
       if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
-        await bot.sendMessage(chatId, "Введи номер авто в формате X999XX99/999 используя латинские буквы");
+        await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
         return searchCar(chatId)
       }
       if (text === "/sos" || text === "Запросить помощь") {
