@@ -91,7 +91,7 @@ const start = async () => {
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
-
+    console.log(msg);
     try {
       if (text === "/start") {
         const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
