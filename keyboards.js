@@ -20,7 +20,7 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://early-dolls-fold-85-234-6-154.loca.lt/form.html",
+							url: "https://short-lies-yawn-85-234-6-154.loca.lt/form.html",
 						},
 					},
 				],

@@ -9,16 +9,7 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
-bot.setMyCommands([
-  { command: "/info", description: "Информация о клубе" },
-  { command: "/partners", description: "Партнеры клуба" },
-  { command: "/ourcars", description: "Наши авто" },
-  { command: "/events", description: "Мероприятия" },
-  { command: "/searchcar", description: "Поиск авто по ГРЗ" },
-  { command: "/sos", description: "Запросить помошь" },
-  { command: "/donate", description: "Донат на поддержку клуба" },
-  { command: "/salecars", description: "Продажа авто" }
-])
+
 
 const searchCar = async (chatId) => {
   return bot.addListener('message', async (msg) => {
@@ -42,23 +33,46 @@ const searchCar = async (chatId) => {
 
 const continueSos = async (chatId) => {
   return bot.addListener('message', async (msg) => {
-    if (msg.text != '') {
+    if (msg.text.length >= 25) {
 
-      let arrPeople = await Users.findAll();
+      let allUsers = await Users.findAll({
+        attributes: ['chatId', 'userName', 'userSurName'],
+      });
 
-      console.log(arrPeople);
+      allUsers.forEach(async (user) => {
+        console.log(user.chatId);
+        if (user.chatId != chatId) {
+          await bot.sendMessage(user.chatId, `${user.userName} ${user.userSurName} прислал(а) просьбу о помощи\nНапиши ей/ему скорее!`)
+          return bot.sendMessage(
+            user.chatId,
+            msg.text,
+            {
+              reply_markup: {
+                keyboard: [
+                  [{ text: `${user.userName}`, url: `tg://user?id=${chatId}` }],
+                ],
+              }
+            }
+          )
+        }
+      })
 
-      /* return (
-        bot.sendMessage(chatId, `${arrPeople.chatId}`),
+      return (
+        bot.sendMessage(chatId, `Ваша просьба о помощи отправлена, надеюсь вам в скором времени помогут :)`, back),
         bot.removeListener("message"),
         start()
-      ) */
+      )
+    } else if (msg.text === 'Вернуться к меню') {
+      return (
+        bot.removeListener("message"),
+        start()
+      )
     } else {
-      /* return (
-        bot.sendMessage(chatId, `Не найдено`),
+      return (
+        bot.sendMessage(chatId, `Ваше сообщение слишком короткое, попробуйте описать проблему подробнее`),
         bot.removeListener("message"),
         start()
-      ) */
+      )
     }
   })
 }
@@ -144,15 +158,26 @@ const start = async () => {
             reply_markup: {
               keyboard: [
                 [{ text: 'Я передумал и хочу вернуться в меню', callback_data: "/leaveSos" }],
-                [{ text: 'Все серьезно, у меня беда', callback_data: "/continueSos" }],
+                [{ text: 'Все серьезно, у меня беда.\nХочу продолжить', callback_data: "/continueSos" }],
               ],
             }
           }
         )
       }
-      if (text === "Все серьезно, у меня беда") {
-        await bot.sendMessage(chatId, "Коротко опишите вашу проблему, сообщите адрес, где вы находитесь, напишите номер вашего телефона или оставьте ссылку на ваш телеграмм-профиль")
-        return continueSos(chatId)
+      if (text === "Все серьезно, у меня беда.\nХочу продолжить") {
+        return (bot.sendMessage(
+          chatId,
+          "Коротко опишите вашу проблему и сообщите адрес, где вы находитесь.\nВажно!!!\n Не забудьте написать номер вашего телефона или оставьте ссылку на ваш телеграмм-профиль, иначе с вами не смогут связаться",
+          {
+            reply_markup: {
+              keyboard: [
+                [{ text: 'Вернуться к меню', callback_data: "/leaveSos" }],
+              ],
+            }
+          }
+        ),
+          continueSos(chatId)
+        )
       }
       if (text === "Показать меню" || text === "Вернуться к меню" || text === "Я передумал и хочу вернуться в меню") {
         return (
