@@ -2,7 +2,7 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { menu, reg, partners_cat, back } = require('./keyboards');
+const { menu, reg, partners_cat, profileFields, back } = require('./keyboards');
 const Users = require("./models");
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
@@ -78,6 +78,122 @@ const continueSos = async (chatId) => {
   })
 }
 
+const editProfile = async (chatId) => {
+  return bot.addListener('message', async (msg) => {
+    if (msg.text === 'Поменяли авто?') {
+      await bot.sendMessage(chatId, `Напишите марку и модель латинскими буквами`, back)
+      return bot.addListener('message', async (msg) => {
+        if (/^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$/.test(msg.text)) {
+          return (
+            Users.update({ carModel: `${msg.text.toLowerCase()}` }, {
+              where: {
+                chatId: msg.chat.id
+              }
+            }),
+            bot.sendMessage(chatId, `Вы обновили марку и модель авто`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        } else if (msg.text === 'Вернуться к меню') {
+          return (
+            bot.removeListener("message"),
+            start()
+          )
+        } else {
+          return (
+            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        }
+      })
+    } else if (msg.text === 'Сменили номер?') {
+      await bot.sendMessage(chatId, `Напишите гос. номер латинскими буквами в формате A000AA00 или A000AA000`, back)
+      return bot.addListener('message', async (msg) => {
+        if (/^[АВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[АВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
+          return (
+            Users.update({ carGRZ: `${msg.text.toUpperCase()}` }, {
+              where: {
+                chatId: msg.chat.id
+              }
+            }),
+            bot.sendMessage(chatId, `Вы обновили гос. номер вашего автомобиля`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        } else if (msg.text === 'Вернуться к меню') {
+          return (
+            bot.removeListener("message"),
+            start()
+          )
+        } else {
+          return (
+            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        }
+      })
+    } else if (msg.text === 'Свапнули мотор?') {
+      await bot.sendMessage(chatId, `Напишите модель вашего нового двигателя`, back)
+      return bot.addListener('message', async (msg) => {
+        if (/^[a-zA-Z]+$/.test(msg.text)) {
+          return (
+            Users.update({ carEngineModel: `${msg.text.toUpperCase()}` }, {
+              where: {
+                chatId: msg.chat.id
+              }
+            }),
+            bot.sendMessage(chatId, `Вы обновили модель вашего двигателя`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        } else if (msg.text === 'Вернуться к меню') {
+          return (
+            bot.removeListener("message"),
+            start()
+          )
+        } else {
+          return (
+            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        }
+      })
+    } else if (msg.text === 'Изменить год авто') {
+      await bot.sendMessage(chatId, `Напишите год выпуска вашего авто`, back)
+      return bot.addListener('message', async (msg) => {
+        let date = new Date();
+        let year = date.getFullYear();
+        if (/^\d+$/.test(msg.text) && msg.text >= 1900 && msg.text <= year) {
+          return (
+            Users.update({ carYear: `${msg.text}` }, {
+              where: {
+                chatId: msg.chat.id
+              }
+            }),
+            bot.sendMessage(chatId, `Вы обновили год выпуска вашего авто`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        } else if (msg.text === 'Вернуться к меню') {
+          return (
+            bot.removeListener("message"),
+            start()
+          )
+        } else {
+          return (
+            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        }
+      })
+    }
+  })
+}
+
 const start = async () => {
   try {
     await sequelize.authenticate()
@@ -91,7 +207,7 @@ const start = async () => {
   bot.on("message", async (msg) => {
     const text = msg.text;
     const chatId = msg.chat.id;
-    console.log(msg);
+
     try {
       if (text === "/start") {
         const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
@@ -179,6 +295,10 @@ const start = async () => {
         ),
           continueSos(chatId)
         )
+      }
+      if (text === "Отредактировать профиль") {
+        await bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
+        return editProfile(chatId)
       }
       if (text === "Показать меню" || text === "Вернуться к меню" || text === "Я передумал и хочу вернуться в меню") {
         return (

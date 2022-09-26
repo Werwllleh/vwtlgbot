@@ -9,7 +9,8 @@ module.exports = {
 				[{ text: 'Информация о клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
 				[{ text: 'Наши авто', callback_data: "/ourcars" }, { text: 'Мероприятия', callback_data: "/events" }],
 				[{ text: 'Поиск авто по ГРЗ', callback_data: "/searchcar" }, { text: 'Запросить помощь', callback_data: "/sos" }],
-				[{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }]
+				[{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }],
+				[{ text: 'Отредактировать профиль', callback_data: "/donate" }],
 			],
 		}
 	},
@@ -20,10 +21,20 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://short-lies-yawn-85-234-6-154.loca.lt/form.html",
+							url: "https://big-tips-melt-85-234-6-154.loca.lt/form.html",
 						},
 					},
 				],
+			],
+		}
+	},
+	profileFields: {
+		reply_markup: {
+			// Добавляем все кнопки
+			keyboard: [
+				[{ text: 'Поменяли авто?', callback_data: "/changeCar" }, { text: 'Сменили номер?', callback_data: "/changeGrz" }],
+				[{ text: 'Свапнули мотор?', callback_data: "/changeEngine" }, { text: 'Изменить год авто', callback_data: "/changeCarYear" }],
+				[{ text: 'Вернуться к меню', callback_data: "/back" }]
 			],
 		}
 	},
