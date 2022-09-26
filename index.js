@@ -326,16 +326,17 @@ const start = async () => {
     let surname = arrData[1].trim();
     let car = arrData[2].trimEnd();
 
+    await Users.create({
+      chatId: msg.chat.id,
+      userName: name[0].toUpperCase() + name.substring(1),
+      userSurName: surname[0].toUpperCase() + surname.substring(1),
+      carModel: car.toLowerCase(),
+      carYear: arrData[3],
+      carGRZ: arrData[4].toUpperCase(),
+      carEngineModel: arrData[5].toUpperCase()
+    })
+
     return (
-      UsersModel.create({
-        chatId: msg.chat.id,
-        userName: name[0].toUpperCase() + name.substring(1),
-        userSurName: surname[0].toUpperCase() + surname.substring(1),
-        carModel: car.toLowerCase(),
-        carYear: arrData[3],
-        carGRZ: arrData[4].toUpperCase(),
-        carEngineModel: arrData[5].toUpperCase()
-      }),
       bot.sendMessage(
         msg.chat.id,
         `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
