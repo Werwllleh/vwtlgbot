@@ -49,6 +49,14 @@ module.exports = {
 			],
 		}
 	},
+	searchAgain: {
+		reply_markup: {
+			keyboard: [
+				[{ text: 'Искать еще раз', callback_data: "/searchGrzAgain" }],
+				[{ text: 'Вернуться к меню', callback_data: "/back" }],
+			],
+		}
+	},
 	back: {
 		reply_markup: {
 			keyboard: [

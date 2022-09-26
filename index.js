@@ -2,7 +2,7 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 const UsersModel = require('./models');
-const { menu, reg, partners_cat, profileFields, back } = require('./keyboards');
+const { menu, reg, partners_cat, profileFields, searchAgain, back } = require('./keyboards');
 const Users = require("./models");
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
@@ -12,12 +12,13 @@ const bot = new TelegramApi(token, { polling: true });
 
 
 const searchCar = async (chatId) => {
+  await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
     if (/^[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
       return (
-        bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`),
+        bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`, searchAgain),
         bot.removeListener("message"),
         start()
       )
@@ -28,7 +29,7 @@ const searchCar = async (chatId) => {
       )
     } else {
       return (
-        bot.sendMessage(chatId, `Не найдено`),
+        bot.sendMessage(chatId, `Не найдено`, searchAgain),
         bot.removeListener("message"),
         start()
       )
@@ -264,7 +265,6 @@ const start = async () => {
         )
       }
       if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
-        await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
         return searchCar(chatId)
       }
       if (text === "/sos" || text === "Запросить помощь") {
@@ -299,6 +299,9 @@ const start = async () => {
       if (text === "Отредактировать профиль") {
         await bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
         return editProfile(chatId)
+      }
+      if (text === "Искать еще раз") {
+        return searchCar(chatId)
       }
       if (text === "Показать меню" || text === "Вернуться к меню" || text === "Я передумал и хочу вернуться в меню") {
         return (
