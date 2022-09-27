@@ -9,8 +9,6 @@ const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
-
-
 const searchCar = async (chatId) => {
   await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
