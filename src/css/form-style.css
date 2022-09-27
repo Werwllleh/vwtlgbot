@@ -1,0 +1,182 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* Remove default padding */
+ul[class],
+ol[class] {
+	padding: 0;
+	margin: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+	padding: 0;
+	margin: 0;
+}
+
+/* Set core body defaults */
+body {
+	min-height: 100vh;
+	scroll-behavior: smooth;
+	text-rendering: optimizeSpeed;
+	line-height: 1.5;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul[class],
+ol[class] {
+	list-style: none;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+	text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img {
+	max-width: 100%;
+	display: block;
+}
+
+/* Natural flow and rhythm in articles by default */
+article>*+* {
+	margin-top: 1em;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+body {
+	background-color: #6494edc9;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+}
+
+.form-body {
+		padding: 15px 30px;
+}
+
+.reg-form {
+
+}
+
+.title-from {
+	color: #fff;
+	text-align: center;
+	margin: 0 0 15px;
+}
+
+.form-fields {}
+
+.form-item {}
+
+.form-item p{
+	color: #fff;
+	font-weight: 500;
+}
+
+.form-item:not(:last-child) {
+	margin: 0 0 10px 0;
+}
+
+.form-item-files-input {
+	padding: 10px 0 !important;
+	box-shadow: none !important;
+}
+
+.form-item__input {
+	width: 100%;
+	padding: 10px 7px;
+	border-radius: 5px;
+	border: none;
+	outline: none;
+	box-shadow: 0 0 2px rgba(205, 205, 205, 0.676);
+	font-weight: 500;
+}
+
+.form-note {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.form-footer {
+	margin: 10px 0 0 0;
+}
+
+.form-submit {
+	margin: 15px 0 0 0;
+	text-align: center;
+
+}
+
+.form-item-files-input::file-selector-button {
+	cursor: pointer;
+	background: #fff;
+	border: none;
+	border-radius: 5px;
+	padding: 7px 10px;
+	font-size: 14px;
+	color: #6494ed;
+	font-weight: 700;
+	transition: 0.3s;
+	margin: 0 15px 0 0;
+}
+
+.fild-note {
+	padding: 0 7px;
+	font-size: 13px;
+}
+
+.fild-note span{
+	color: rgb(4, 3, 66);
+	font-weight: 500;
+}
+
+.form-submit-btn {
+	cursor: pointer;
+	background: #fff;
+	border: none;
+	border-radius: 5px;
+	padding: 7px 20px;
+	font-size: 18px;
+	color: #6494edc9;
+	font-weight: 700;
+	box-shadow: 0 0 3px rgba(205, 205, 205, 0.834);
+	transition: 0.3s;
+}
+
+.form-submit-btn:hover {
+	box-shadow: 0 0 15px #707070e0;
+	color: #376cce;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	/* display: none; <- Crashes Chrome on hover */
+	-webkit-appearance: none;
+	margin: 0;
+	/* <-- Apparently some margin are still there even though it's hidden */
+}
