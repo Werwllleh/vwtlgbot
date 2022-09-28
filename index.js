@@ -14,7 +14,7 @@ bot.setMyCommands();
 const searchCar = async (chatId) => {
   await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
-    if (/^[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
+    if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
       if (carNum) {
