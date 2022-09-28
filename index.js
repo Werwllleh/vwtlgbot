@@ -42,15 +42,10 @@ const searchCar = async (chatId) => {
 const continueSos = async (chatId) => {
   return bot.addListener('message', async (msg) => {
     if (msg.text.length >= 25) {
-
       let allUsersId = await Users.findAll({
         attributes: ['chatId'],
       });
-
-      console.log(msg);
-
       allUsersId.forEach(async (userId) => {
-
         if (userId.chatId != chatId) {
           await bot.sendMessage(userId.chatId, `Пришла просьба о помощи!\nНапиши ей/ему скорее!`)
           return bot.sendMessage(
@@ -60,7 +55,6 @@ const continueSos = async (chatId) => {
           )
         }
       })
-
       return (
         bot.sendMessage(chatId, `Ваша просьба о помощи отправлена, надеюсь вам в скором времени помогут :)`, back),
         bot.removeListener("message"),
@@ -224,7 +218,6 @@ const start = async () => {
             )
           )
         } else {
-          // return UsersModel.create({ chatId });
           return bot.sendMessage(
             chatId,
             `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста зарегистрируйтесь`,
@@ -363,7 +356,6 @@ const start = async () => {
     }
   });
 };
-
 
 start();
 

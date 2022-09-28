@@ -21,7 +21,7 @@ module.exports = {
 					{
 						text: "Регистрация",
 						web_app: {
-							url: "https://big-tips-melt-85-234-6-154.loca.lt/form.html",
+							url: "https://193.164.149.140/form.html",
 						},
 					},
 				],
