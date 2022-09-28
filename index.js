@@ -1,7 +1,7 @@
 const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
-const UsersModel = require('./models');
+
 const { menu, reg, partners_cat, profileFields, searchAgain, back } = require('./keyboards');
 const Users = require("./models");
 
@@ -14,24 +14,26 @@ const searchCar = async (chatId) => {
   return bot.addListener('message', async (msg) => {
     if (/^[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[aвекмнорстухabekmhopctyxАВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
-      carNum = await UsersModel.findOne({ where: { carGRZ: queryGrz } });
-      return (
+      carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
+      if (carNum) {
+        return (
         bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`, searchAgain),
         bot.removeListener("message"),
         start()
       )
+      } else {
+        return (
+          bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
+          bot.removeListener("message"),
+          start()
+        )
+      }
     } else if (msg.text === 'Вернуться к меню') {
       return (
         bot.removeListener("message"),
         start()
       )
-    } else {
-      return (
-        bot.sendMessage(chatId, `Не найдено`, searchAgain),
-        bot.removeListener("message"),
-        start()
-      )
-    }
+    } 
   })
 }
 
@@ -193,6 +195,7 @@ const editProfile = async (chatId) => {
   })
 }
 
+
 const start = async () => {
   try {
     await sequelize.authenticate()
@@ -209,7 +212,7 @@ const start = async () => {
 
     try {
       if (text === "/start") {
-        const userChatId = await UsersModel.findOne({ where: { chatId: chatId } });
+        const userChatId = await Users.findOne({ where: { chatId: chatId } });
         if (userChatId) {
           return (
             bot.sendMessage(
