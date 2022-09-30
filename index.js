@@ -226,10 +226,10 @@ const start = async () => {
         }
       }
       if (text === "/info" || text === "Информация о клубе") {
-        await bot.sendPhoto(
+        /* await bot.sendPhoto(
           chatId,
           'src/img/logo.jpeg'
-        )
+        ) */
         return (
           bot.sendMessage(
             chatId,
