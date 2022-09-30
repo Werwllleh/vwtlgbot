@@ -65,9 +65,7 @@
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
 
 		let tg = window.Telegram.WebApp;
-		tg.expand();
-		tg.MainButton.show();
-		tg.MainButton.disable();
+		tg.MainButton.isVisible = true;
 		tg.MainButton.text = 'Отправить';
 		
 		tg.MainButton.hide();
