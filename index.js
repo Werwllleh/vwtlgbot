@@ -14,15 +14,16 @@ bot.setMyCommands();
 const searchCar = async (chatId) => {
   await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
-    if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
+    // if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
+    if (msg.text.length == 8 || msg.text.length == 9) {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
       if (carNum) {
         return (
-        bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`, searchAgain),
-        bot.removeListener("message"),
-        start()
-      )
+          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`, searchAgain),
+          bot.removeListener("message"),
+          start()
+        )
       } else {
         return (
           bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
@@ -35,7 +36,7 @@ const searchCar = async (chatId) => {
         bot.removeListener("message"),
         start()
       )
-    } 
+    }
   })
 }
 
