@@ -326,6 +326,12 @@ const start = async () => {
           continueSos(chatId)
         )
       }
+      if (text === "Продажа авто") {
+        return bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
+      }
+      if (text === "Наши авто") {
+        return bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
+      }
       if (text === "Отредактировать профиль") {
         await bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
         return editProfile(chatId)
