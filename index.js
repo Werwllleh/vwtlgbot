@@ -19,7 +19,11 @@ const searchCar = async (chatId) => {
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
       if (carNum) {
         return (
-          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}`, searchAgain),
+          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
+          bot.sendPhoto(
+            chatId,
+            `${carNum.carImage}`
+          ),
           bot.removeListener("message"),
           start()
         )
@@ -83,12 +87,12 @@ const continueSos = async (chatId) => {
 
 const editProfile = async (chatId) => {
   return bot.addListener('message', async (msg) => {
-    if (msg.text === 'Поменяли авто?') {
+    if (msg.text === 'Поменять авто') {
       await bot.sendMessage(chatId, `Напишите марку и модель латинскими буквами`, back)
       return bot.addListener('message', async (msg) => {
         if (/^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$/.test(msg.text)) {
           return (
-            Users.update({ carModel: `${msg.text.toLowerCase()}` }, {
+            Users.update({ carModel: `${msg.text.toLowerCase().trimEnd()}` }, {
               where: {
                 chatId: msg.chat.id
               }
@@ -110,12 +114,12 @@ const editProfile = async (chatId) => {
           )
         }
       })
-    } else if (msg.text === 'Сменили номер?') {
-      await bot.sendMessage(chatId, `Напишите гос. номер латинскими буквами в формате A000AA00 или A000AA000`, back)
+    } else if (msg.text === 'Сменить номер') {
+      await bot.sendMessage(chatId, `Напишите гос. номер латинскими буквами\n(формат A000AA00 или A000AA000)`, back)
       return bot.addListener('message', async (msg) => {
         if (/^[АВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[АВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
           return (
-            Users.update({ carGRZ: `${msg.text.toUpperCase()}` }, {
+            Users.update({ carGRZ: `${msg.text.toUpperCase().trimEnd()}` }, {
               where: {
                 chatId: msg.chat.id
               }
@@ -137,12 +141,12 @@ const editProfile = async (chatId) => {
           )
         }
       })
-    } else if (msg.text === 'Свапнули мотор?') {
-      await bot.sendMessage(chatId, `Напишите модель вашего нового двигателя`, back)
+    } else if (msg.text === 'Добавить/изменить модель двигателя') {
+      await bot.sendMessage(chatId, `Напишите модель вашего двигателя\n(формат XXXX)`, back)
       return bot.addListener('message', async (msg) => {
         if (/^[a-zA-Z]+$/.test(msg.text)) {
           return (
-            Users.update({ carEngineModel: `${msg.text.toUpperCase()}` }, {
+            Users.update({ carEngineModel: `${msg.text.toUpperCase().trimEnd()}` }, {
               where: {
                 chatId: msg.chat.id
               }
@@ -171,7 +175,7 @@ const editProfile = async (chatId) => {
         let year = date.getFullYear();
         if (/^\d+$/.test(msg.text) && msg.text >= 1900 && msg.text <= year) {
           return (
-            Users.update({ carYear: `${msg.text}` }, {
+            Users.update({ carYear: `${msg.text.trimEnd()}` }, {
               where: {
                 chatId: msg.chat.id
               }
@@ -188,6 +192,34 @@ const editProfile = async (chatId) => {
         } else {
           return (
             bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        }
+      })
+    } else if (msg.text === 'Добавить/поменять фото авто') {
+      await bot.sendMessage(chatId, `Загрузите одно изображение вашего автомобиля`, back)
+      return bot.addListener('message', async (msg) => {
+        if (msg.photo) {
+          let carImg = msg.photo[0].file_id;
+          return (
+            Users.update({ carImage: `${carImg}` }, {
+              where: {
+                chatId: msg.chat.id
+              }
+            }),
+            bot.sendMessage(chatId, `Вы обновили фото вашего авто`, back),
+            bot.removeListener("message"),
+            start()
+          )
+        } else if (msg.text === 'Вернуться к меню') {
+          return (
+            bot.removeListener("message"),
+            start()
+          )
+        } else {
+          return (
+            bot.sendMessage(chatId, `Вы не загрузили фотографию`, back),
             bot.removeListener("message"),
             start()
           )
@@ -232,10 +264,6 @@ const start = async () => {
         }
       }
       if (text === "/info" || text === "Информация о клубе") {
-        /* await bot.sendPhoto(
-          chatId,
-          'src/img/logo.jpeg'
-        ) */
         return (
           bot.sendMessage(
             chatId,

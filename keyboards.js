@@ -30,9 +30,9 @@ module.exports = {
 		reply_markup: {
 			// Добавляем все кнопки
 			keyboard: [
-				[{ text: 'Поменяли авто?', callback_data: "/changeCar" }, { text: 'Сменили номер?', callback_data: "/changeGrz" }],
-				[{ text: 'Свапнули мотор?', callback_data: "/changeEngine" }, { text: 'Изменить год авто', callback_data: "/changeCarYear" }],
-				[{ text: 'Вернуться к меню', callback_data: "/back" }]
+				[{ text: 'Поменять авто', callback_data: "/changeCar" }, { text: 'Сменить номер', callback_data: "/changeGrz" }],
+				[{ text: 'Добавить/изменить модель двигателя', callback_data: "/changeEngine" }, { text: 'Изменить год авто', callback_data: "/changeCarYear" }],
+				[{ text: 'Добавить/поменять фото авто', callback_data: "/changeCarImg" }, { text: 'Вернуться к меню', callback_data: "/back" }]
 			],
 		}
 	},
