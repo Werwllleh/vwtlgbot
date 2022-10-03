@@ -18,12 +18,14 @@ const searchCar = async (chatId) => {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
       if (carNum) {
-        return (
-          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
-          bot.sendPhoto(
+        if (carNum.carImage) {
+          await bot.sendPhoto(
             chatId,
             `${carNum.carImage}`
-          ),
+          )
+        }
+        return (
+          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
           bot.removeListener("message"),
           start()
         )
