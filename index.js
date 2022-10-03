@@ -310,9 +310,7 @@ const start = async () => {
                 ],
               }
             }
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
       if (text === "Все серьезно, у меня беда.\nХочу продолжить") {
