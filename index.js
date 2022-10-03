@@ -11,8 +11,8 @@ const bot = new TelegramApi(token, { polling: true });
 
 bot.setMyCommands();
 
-const searchCar = async (chatId) => {
-  await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
+const searchCar = (chatId) => {
+  bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
     if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
@@ -53,38 +53,36 @@ const searchCar = async (chatId) => {
 
 const continueSos = async (chatId) => {
   return bot.addListener('message', async (msg) => {
-    if (msg.chat.id === chatId) {
-      if (msg.text.length >= 25) {
-        let allUsersId = await Users.findAll({
-          attributes: ['chatId'],
-        });
-        allUsersId.forEach(async (userId) => {
-          if (userId.chatId != chatId) {
-            await bot.sendMessage(userId.chatId, `Пришла просьба о помощи!\nНапиши ей/ему скорее!`)
-            return bot.sendMessage(
-              userId.chatId,
-              msg.text,
-              back
-            )
-          }
-        })
-        return (
-          bot.sendMessage(chatId, `Ваша просьба о помощи отправлена, надеюсь вам в скором времени помогут :)`, back),
-          bot.removeListener("message"),
-          start()
-        )
-      } else if (msg.text === 'Вернуться к меню') {
-        return (
-          bot.removeListener("message"),
-          start()
-        )
-      } else {
-        return (
-          bot.sendMessage(chatId, `Ваше сообщение слишком короткое, попробуйте описать проблему подробнее`),
-          bot.removeListener("message"),
-          start()
-        )
-      }
+    if (msg.text.length >= 25) {
+      let allUsersId = await Users.findAll({
+        attributes: ['chatId'],
+      });
+      allUsersId.forEach(async (userId) => {
+        if (userId.chatId != chatId) {
+          await bot.sendMessage(userId.chatId, `Пришла просьба о помощи!\nНапиши ей/ему скорее!`)
+          return bot.sendMessage(
+            userId.chatId,
+            msg.text,
+            back
+          )
+        }
+      })
+      return (
+        bot.sendMessage(chatId, `Ваша просьба о помощи отправлена, надеюсь вам в скором времени помогут :)`, back),
+        bot.removeListener("message"),
+        start()
+      )
+    } else if (msg.text === 'Вернуться к меню') {
+      return (
+        bot.removeListener("message"),
+        start()
+      )
+    } else {
+      return (
+        bot.sendMessage(chatId, `Ваше сообщение слишком короткое, попробуйте описать проблему подробнее`),
+        bot.removeListener("message"),
+        start()
+      )
     }
   })
 }
