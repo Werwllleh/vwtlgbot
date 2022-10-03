@@ -327,24 +327,33 @@ const start = async () => {
     let name = arrData[0].trim();
     let surname = arrData[1].trim();
     let car = arrData[2].trimEnd();
+    let carYear = arrData[3];
+    let carGRZ = arrData[4].toUpperCase();
 
-    await Users.create({
-      chatId: msg.chat.id,
-      userName: name[0].toUpperCase() + name.substring(1),
-      userSurName: surname[0].toUpperCase() + surname.substring(1),
-      carModel: car.toLowerCase(),
-      carYear: arrData[3],
-      carGRZ: arrData[4].toUpperCase(),
-      carEngineModel: arrData[5].toUpperCase()
-    })
-
-    return (
-      bot.sendMessage(
+    if (name == '' || surname == '' || surname == '' || car == '' || carYear == '' || carGRZ == '') {
+      return bot.sendMessage(
         msg.chat.id,
-        `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
-        menu
+        `Пожалуйста введите верные данные, попробуйте еще раз`,
+        reg
       )
-    )
+    } else {
+      return (
+        Users.create({
+          chatId: msg.chat.id,
+          userName: name[0].toUpperCase() + name.substring(1),
+          userSurName: surname[0].toUpperCase() + surname.substring(1),
+          carModel: car.toLowerCase(),
+          carYear: carYear,
+          carGRZ: arrData[4].toUpperCase(),
+          carEngineModel: arrData[5].toUpperCase()
+        }),
+        bot.sendMessage(
+          msg.chat.id,
+          `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
+          menu
+        )
+      )
+    }
   });
 
   bot.on('callback_query', async (msg) => {

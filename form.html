@@ -16,27 +16,27 @@
 			<div class="form-fields">
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="user_name" placeholder="Ваше имя*" type="text"
-						pattern="^[а-яА-Я\s]+$">
+						pattern="^[а-яА-Я\s]+$" required>
 					<p class="fild-note">русскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="user_surname" placeholder="Ваша фамилия*"
-						pattern="^[а-яА-Я\s]+$" type="text">
+						pattern="^[а-яА-Я\s]+$" required type="text">
 					<p class="fild-note">русскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_model_name" placeholder="Марка и модель авто*"
-						type="text" pattern="^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$">
+						type="text" pattern="^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$" required>
 					<p class="fild-note">латинскими буквами</p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_year" placeholder="Год выпуска авто*" type="number"
-						pattern="^\d+$" min="1800" max="2023">
+						pattern="^\d+$" min="1800" max="2023" required>
 					<p class="fild-note"></p>
 				</div>
 				<div class="form-item">
 					<input id="req-field" class="form-item__input" name="car_grz" placeholder="Номер авто*" type="text"
-						pattern="^[ABEKMHOPCTYX]\d{3}(?<!000)[ABEKMHOPCTYX]{2}\d{2,3}$" maxlength="9">
+						pattern="^[ABEKMHOPCTYX]\d{3}(?<!000)[ABEKMHOPCTYX]{2}\d{2,3}$" required maxlength="9">
 					<p class="fild-note">в формате <span>A000AA00</span> или <span>A000AA000</span> латинскими буквами</p>
 				</div>
 				<div class="form-item">
@@ -58,11 +58,11 @@
 	<style>
 		.form-item__input,
 		.form-item__input:valid {
-			background: #fff;
+			border: 2px solid #fff;
 		}
 
 		.form-item__input:invalid {
-			background: #e86f75;
+			border: 2px solid #ff2732c8;
 		}
 	</style>
 	<script>
@@ -74,8 +74,18 @@
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
 
+		let inputs = document.querySelectorAll('#req-field');
+
 		let tg = window.Telegram.WebApp;
 		tg.expand();
+		tg.MainButton.show();
+		tg.MainButton.text = 'Отправить';
+
+		Telegram.WebApp.onEvent('mainButtonClicked', function () {
+			tg.sendData(
+				`${user_name.value},${user_surname.value},${car_model_name.value},${car_year.value},${car_grz.value},${car_engine_name.value}`
+			);
+		});
 
 		/* user_name.addEventListener('input', function () {
 			if (/^[а-яА-Я\s]+$/.test(user_name.value) && user_name.value.length >= 4) {
@@ -142,22 +152,9 @@
 			}
 		}) */
 
-		let inputs = document.querySelectorAll('#req-field');
+		// let inputs = document.querySelectorAll('#req-field');
 
-		car_grz.oninput = function () {
-			if (/^[ABEKMHOPCTYX]\d{3}(?<!000)[ABEKMHOPCTYX]{2}\d{2,3}$/.test(car_grz.value)) {
-				tg.MainButton.show();
-				tg.MainButton.text = 'Отправить';
-				console.log('wefwgwergrg');
-				Telegram.WebApp.onEvent('mainButtonClicked', function () {
-					tg.sendData(
-						`${user_name.value},${user_surname.value},${car_model_name.value},${car_year.value},${car_grz.value},${car_engine_name.value}`
-					);
-				});
-			} else {
-				tg.MainButton.hide();
-			}
-		}
+
 
 	</script>
 </body>
