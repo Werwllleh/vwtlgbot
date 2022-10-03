@@ -11,8 +11,8 @@ const bot = new TelegramApi(token, { polling: true });
 
 bot.setMyCommands();
 
-const searchCar = (chatId) => {
-  bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
+const searchCar = async (chatId) => {
+  await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
   return bot.addListener('message', async (msg) => {
     if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
