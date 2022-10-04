@@ -6,11 +6,12 @@ module.exports = {
 		reply_markup: {
 			// Добавляем все кнопки
 			keyboard: [
-				[{ text: 'Информация о клубе', callback_data: "/info" }, { text: 'Партнеры', callback_data: "/partners" }],
-				[{ text: 'Наши авто', callback_data: "/ourcars" }, { text: 'Мероприятия', callback_data: "/events" }],
-				[{ text: 'Поиск авто по ГРЗ', callback_data: "/searchcar" }, { text: 'Запросить помощь', callback_data: "/sos" }],
-				[{ text: 'Поддержать клуб', callback_data: "/donate" }, { text: 'Продажа авто', callback_data: "/salecars" }],
-				[{ text: 'Отредактировать профиль', callback_data: "/donate" }],
+				[{ text: 'Информация о клубе' }, { text: 'Партнеры' }],
+				[{ text: 'Наши авто' }, { text: 'Мероприятия' }],
+				[{ text: 'Поиск авто по ГРЗ' }, { text: 'Запросить помощь' }],
+				[{ text: 'Поддержать клуб' }, { text: 'Продажа авто' }],
+				[{ text: 'Посмотреть мой профиль' }],
+				[{ text: 'Отредактировать профиль' }],
 			],
 		}
 	},

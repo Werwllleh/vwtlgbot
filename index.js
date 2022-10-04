@@ -18,32 +18,34 @@ const searchCar = async (chatId) => {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
       if (carNum) {
-        return (
-          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
-          bot.sendPhoto(
+        if (carNum.carImage) {
+          await bot.sendPhoto(
             chatId,
             `${carNum.carImage}`
-          ),
+          )
+        }
+        return (
+          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
           bot.removeListener("message"),
-          start()
+          start(chatId)
         )
       } else {
         return (
           bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
           bot.removeListener("message"),
-          start()
+          start(chatId)
         )
       }
     } else if (msg.text === 'Вернуться к меню') {
       return (
         bot.removeListener("message"),
-        start()
+        start(chatId)
       )
     } else {
       return (
         bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
         bot.removeListener("message"),
-        start()
+        start(chatId)
       )
     }
   })
@@ -68,18 +70,18 @@ const continueSos = async (chatId) => {
       return (
         bot.sendMessage(chatId, `Ваша просьба о помощи отправлена, надеюсь вам в скором времени помогут :)`, back),
         bot.removeListener("message"),
-        start()
+        start(chatId)
       )
     } else if (msg.text === 'Вернуться к меню') {
       return (
         bot.removeListener("message"),
-        start()
+        start(chatId)
       )
     } else {
       return (
         bot.sendMessage(chatId, `Ваше сообщение слишком короткое, попробуйте описать проблему подробнее`),
         bot.removeListener("message"),
-        start()
+        start(chatId)
       )
     }
   })
@@ -99,18 +101,18 @@ const editProfile = async (chatId) => {
             }),
             bot.sendMessage(chatId, `Вы обновили марку и модель авто`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else if (msg.text === 'Вернуться к меню') {
           return (
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else {
           return (
             bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         }
       })
@@ -126,18 +128,18 @@ const editProfile = async (chatId) => {
             }),
             bot.sendMessage(chatId, `Вы обновили гос. номер вашего автомобиля`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else if (msg.text === 'Вернуться к меню') {
           return (
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else {
           return (
             bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         }
       })
@@ -153,18 +155,18 @@ const editProfile = async (chatId) => {
             }),
             bot.sendMessage(chatId, `Вы обновили модель вашего двигателя`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else if (msg.text === 'Вернуться к меню') {
           return (
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else {
           return (
             bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         }
       })
@@ -182,18 +184,18 @@ const editProfile = async (chatId) => {
             }),
             bot.sendMessage(chatId, `Вы обновили год выпуска вашего авто`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else if (msg.text === 'Вернуться к меню') {
           return (
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else {
           return (
             bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         }
       })
@@ -210,23 +212,34 @@ const editProfile = async (chatId) => {
             }),
             bot.sendMessage(chatId, `Вы обновили фото вашего авто`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else if (msg.text === 'Вернуться к меню') {
           return (
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         } else {
           return (
             bot.sendMessage(chatId, `Вы не загрузили фотографию`, back),
             bot.removeListener("message"),
-            start()
+            start(chatId)
           )
         }
       })
     }
   })
+}
+
+const showProfile = async (chatId) => {
+  profile = await Users.findOne({ where: { chatId: chatId } });
+  return (
+    bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nМодель двигателя: ${profile.carEngineModel}`),
+    bot.sendPhoto(
+      chatId,
+      `${profile.carImage}`
+    )
+  )
 }
 
 
@@ -269,9 +282,7 @@ const start = async () => {
             chatId,
             `Привет привееет!\nНа связи VW/SK CLUB 21 - крупнейшее автосообщество ваговодов Чувашии☝🏻\n\nМы - одна большая семья, которая держится друг за друга, делится своими радостями и неудачами, а все остальные переживают это, помогают в решении вопроса и поддерживают!\nВсе любят покрасоваться своими ласточками и мы не исключение💥\nВвиду этого у нас стабильно проходят автовстречи, где собирается вся наша дружная семья и обсуждает все события в большом кругу.\nА затем флаги в руки и в конвой.\nМы проезжаем по центральным улицам Чебоксар, чтобы показать нашу активность и дружность.\nНе забудем сказать и про партнеров, которых у нас немало. И этот список постоянно пополняется. От доставки еды до ремонта турбины - огромное количество сфер готовы предоставить клубную скидку для таких умничек и молодцов😂😂\n\nУ тебя нет ВАГа, но ты настоящий фанат немецкого автопрома? Не переживай и приходи на встречу🥰 Мы любим и уважаем каждого участника.\nДумаем, что стало немного понятнее.\nПоэтому чего ждать - добро пожаловать к нам в клуб!!!🎉🎊🎉🎊🎉`,
             back
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
       if (text === "/events" || text === "Мероприятия") {
@@ -284,9 +295,7 @@ const start = async () => {
             chatId,
             `Ближайшая запланированная встреча состоится 2 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`,
             back
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
       if (text === "/partners" || text === "Партнеры" || text === "Партнеры клуба") {
@@ -295,9 +304,7 @@ const start = async () => {
             chatId,
             `Выберите категорию:`,
             partners_cat
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
       if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
@@ -316,9 +323,7 @@ const start = async () => {
                 ],
               }
             }
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
       if (text === "Все серьезно, у меня беда.\nХочу продолжить") {
@@ -339,21 +344,20 @@ const start = async () => {
       }
       if (text === "Продажа авто") {
         return (
-          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back),
-          bot.removeListener("message"),
-          start()
+          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
         )
       }
       if (text === "Наши авто") {
         return (
-          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back),
-          bot.removeListener("message"),
-          start()
+          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
         )
       }
       if (text === "Отредактировать профиль") {
         await bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
         return editProfile(chatId)
+      }
+      if (text === "Посмотреть мой профиль") {
+        return showProfile(chatId)
       }
       if (text === "Искать еще раз") {
         return searchCar(chatId)
@@ -364,9 +368,7 @@ const start = async () => {
             chatId,
             `Что вас интересует?`,
             menu
-          ),
-          bot.removeListener("message"),
-          start()
+          )
         )
       }
     } catch (e) {
@@ -414,7 +416,6 @@ const start = async () => {
   /* bot.on('callback_query', async (msg) => {
     const data = msg.data;
     const chatId = msg.message.chat.id;
-
     if (data === '/back') {
       return (
         bot.sendMessage(
@@ -428,4 +429,3 @@ const start = async () => {
 };
 
 start();
-
