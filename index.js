@@ -13,7 +13,7 @@ bot.setMyCommands();
 
 const searchCar = async (chatId) => {
   await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
-  return bot.addListener('message', async (msg) => {
+  await bot.addListener('message', async (msg) => {
     if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
       queryGrz = String(msg.text).toUpperCase();
       carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
@@ -24,25 +24,25 @@ const searchCar = async (chatId) => {
             `${carNum.carImage}`
           )
         }
-        return (
+        await (
           bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
           bot.removeListener("message"),
           start(chatId)
         )
       } else {
-        return (
+        await (
           bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
           bot.removeListener("message"),
           start(chatId)
         )
       }
     } else if (msg.text === 'Вернуться к меню') {
-      return (
+      await (
         bot.removeListener("message"),
         start(chatId)
       )
     } else {
-      return (
+      await (
         bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
         bot.removeListener("message"),
         start(chatId)
@@ -291,8 +291,7 @@ const start = async () => {
         return (
           bot.sendMessage(
             chatId,
-            `Ближайшая запланированная встреча состоится 2 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`,
-            back
+            `Ближайшая запланированная встреча состоится 2 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`
           )
         )
       }
