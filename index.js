@@ -1,5 +1,8 @@
 const TelegramApi = require("node-telegram-bot-api");
 
+const express = require('express');
+const cors = require('cors');
+
 const sequelize = require('./db');
 
 const { menu, reg, partners, profileFields, searchAgain, back } = require('./keyboards');
@@ -8,6 +11,11 @@ const Users = require("./models");
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 process.env["NTBA_FIX_350"] = 1;
 
@@ -218,15 +226,15 @@ const editProfile = async (chatId) => {
   })
 }
 
+try {
+  sequelize.authenticate()
+  sequelize.sync()
+  console.log('Connection has been established successfully.');
+} catch (e) {
+  console.log('Подключение к бд сломалось', e);
+}
 
 const start = async () => {
-  try {
-    await sequelize.authenticate()
-    await sequelize.sync()
-    console.log('Connection has been established successfully.');
-  } catch (e) {
-    console.log('Подключение к бд сломалось', e);
-  }
 
   bot.on("message", async (msg) => {
     const text = msg.text;
@@ -380,8 +388,8 @@ bot.onText(/Вернуться к меню/, async (msg) => {
   const text = msg.text;
   const chatId = msg.chat.id;
 
-  bot.removeAllListeners()
   return (
+    bot.removeAllListeners(),
     bot.sendMessage(
       chatId,
       `Что вас интересует?`,
@@ -390,6 +398,35 @@ bot.onText(/Вернуться к меню/, async (msg) => {
     start()
   )
 })
+
+/* bot.onText(/\/chat$/, (msg) => {
+  const chatId = msg.chat.id;
+  let fullName = '';
+
+  let resp = `May I take down your name, ${msg.chat.username}`;
+  bot.sendMessage(chatId, resp).then(() => {
+    return bot.sendMessage(chatId, msg => fullName = msg.text);
+  }).then(() => {
+    let resp = `It's a pleasure to meet you ${fullName}`;
+    bot.sendMessage(chatId, resp)
+  });
+}); */
+
+/* bot.sendMessage(chat_id, "1").then(() => {
+  return (
+    bot.sendMessage(chat_id, "2"))
+}).then(() => {
+  return (
+    bot.sendMessage(chat_id, "3"))
+}); */
+
+/* bot.sendMessage(chat_id, "1").then(() => {
+  return (
+    bot.sendMessage(chat_id, "2"))
+}).then(() => {
+  return (
+    bot.sendMessage(chat_id, "3"))
+}); */
 
 bot.onText(/Мероприятия/, async (msg) => {
   const text = msg.text;
@@ -408,3 +445,7 @@ bot.onText(/Мероприятия/, async (msg) => {
 })
 
 start();
+
+const PORT = 8000;
+
+app.listen(PORT, () => console.log('server started on PORT ' + PORT))
