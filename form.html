@@ -81,7 +81,7 @@
 		tg.MainButton.show();
 		tg.MainButton.text = 'Отправить';
 
-		Telegram.WebApp.onEvent('mainButtonClicked', function () {
+		tg.onEvent('mainButtonClicked', function () {
 			tg.sendData(
 				`${user_name.value},${user_surname.value},${car_model_name.value},${car_year.value},${car_grz.value},${car_engine_name.value}`
 			);

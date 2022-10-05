@@ -2,50 +2,37 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const sequelize = require('./db');
 
-const { menu, reg, partners_cat, profileFields, searchAgain, back } = require('./keyboards');
+const { menu, reg, partners, profileFields, searchAgain, back } = require('./keyboards');
 const Users = require("./models");
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
+process.env["NTBA_FIX_350"] = 1;
+
 bot.setMyCommands();
 
-const searchCar = async (chatId) => {
-  await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
-  await bot.addListener('message', async (msg) => {
-    if (/^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
-      queryGrz = String(msg.text).toUpperCase();
-      carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
-      if (carNum) {
-        if (carNum.carImage) {
-          await bot.sendPhoto(
-            chatId,
-            `${carNum.carImage}`
-          )
-        }
-        await (
-          bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`, searchAgain),
-          bot.removeListener("message"),
-          start(chatId)
-        )
-      } else {
-        await (
-          bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
-          bot.removeListener("message"),
-          start(chatId)
-        )
+let searchCar = () => {
+  let regExp = /^[abekmhopctyxABEKMHOPCTYX]\d{3}(?<!000)[abekmhopctyxABEKMHOPCTYX]{2}\d{2,3}$/;
+  bot.onText(regExp, async (msg) => {
+    const text = msg.text;
+    const chatId = msg.chat.id;
+
+    queryGrz = String(text).toUpperCase();
+    carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
+    if (carNum) {
+      if (carNum.carImage) {
+        await bot.sendPhoto(chatId, `${carNum.carImage}`)
       }
-    } else if (msg.text === 'Вернуться к меню') {
-      await (
-        bot.removeListener("message"),
-        start(chatId)
+      return (
+        bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`),
+        bot.removeTextListener(regExp)
       )
     } else {
-      await (
-        bot.sendMessage(chatId, `Такой номер не найден, попробуйте еще раз`, searchAgain),
-        bot.removeListener("message"),
-        start(chatId)
+      return (
+        bot.sendMessage(chatId, `Ничего не найдено(`),
+        bot.removeTextListener(regExp)
       )
     }
   })
@@ -231,17 +218,6 @@ const editProfile = async (chatId) => {
   })
 }
 
-const showProfile = async (chatId) => {
-  profile = await Users.findOne({ where: { chatId: chatId } });
-  return (
-    bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nМодель двигателя: ${profile.carEngineModel}`),
-    bot.sendPhoto(
-      chatId,
-      `${profile.carImage}`
-    )
-  )
-}
-
 
 const start = async () => {
   try {
@@ -256,173 +232,179 @@ const start = async () => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
-    try {
-      if (text === "/start") {
-        const userChatId = await Users.findOne({ where: { chatId: chatId } });
-        if (userChatId) {
-          return (
-            bot.sendMessage(
-              chatId,
-              `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
-              menu
-            )
-          )
-        } else {
-          return bot.sendMessage(
-            chatId,
-            `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста зарегистрируйтесь`,
-            reg
-          )
-        }
-      }
-      if (text === "/info" || text === "Информация о клубе") {
-        return (
-          bot.sendMessage(
-            chatId,
-            `Привет привееет!\nНа связи VW/SK CLUB 21 - крупнейшее автосообщество ваговодов Чувашии☝🏻\n\nМы - одна большая семья, которая держится друг за друга, делится своими радостями и неудачами, а все остальные переживают это, помогают в решении вопроса и поддерживают!\nВсе любят покрасоваться своими ласточками и мы не исключение💥\nВвиду этого у нас стабильно проходят автовстречи, где собирается вся наша дружная семья и обсуждает все события в большом кругу.\nА затем флаги в руки и в конвой.\nМы проезжаем по центральным улицам Чебоксар, чтобы показать нашу активность и дружность.\nНе забудем сказать и про партнеров, которых у нас немало. И этот список постоянно пополняется. От доставки еды до ремонта турбины - огромное количество сфер готовы предоставить клубную скидку для таких умничек и молодцов😂😂\n\nУ тебя нет ВАГа, но ты настоящий фанат немецкого автопрома? Не переживай и приходи на встречу🥰 Мы любим и уважаем каждого участника.\nДумаем, что стало немного понятнее.\nПоэтому чего ждать - добро пожаловать к нам в клуб!!!🎉🎊🎉🎊🎉`
-          )
-        )
-      }
-      if (text === "/events" || text === "Мероприятия") {
-        await bot.sendPhoto(
-          chatId,
-          'src/img/event1.jpeg'
-        )
-        return (
-          bot.sendMessage(
-            chatId,
-            `Ближайшая запланированная встреча состоится 2 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`
-          )
-        )
-      }
-      if (text === "/partners" || text === "Партнеры" || text === "Партнеры клуба") {
-        return (
-          bot.sendMessage(
-            chatId,
-            `Выберите категорию:`,
-            partners_cat
-          )
-        )
-      }
-      if (text === "/searchcar" || text === "Поиск авто по ГРЗ") {
-        return searchCar(chatId)
-      }
-      if (text === "/sos" || text === "Запросить помощь") {
-        return (
-          bot.sendMessage(
-            chatId,
-            "Надеюсь вы не шутите, ведь ваша просьба прилетит всем зарегистрированным участникам сообщества",
-            {
-              reply_markup: {
-                keyboard: [
-                  [{ text: 'Я передумал и хочу вернуться в меню', callback_data: "/leaveSos" }],
-                  [{ text: 'Все серьезно, у меня беда.\nХочу продолжить', callback_data: "/continueSos" }],
-                ],
-              }
-            }
-          )
-        )
-      }
-      if (text === "Все серьезно, у меня беда.\nХочу продолжить") {
-        return (
-          bot.sendMessage(
-            chatId,
-            "Коротко опишите вашу проблему и сообщите адрес, где вы находитесь.\nВажно!!!\nНе забудьте написать номер вашего телефона или оставьте ссылку на ваш телеграмм-профиль, иначе с вами не смогут связаться",
-            {
-              reply_markup: {
-                keyboard: [
-                  [{ text: 'Вернуться к меню', callback_data: "/leaveSos" }],
-                ],
-              }
-            }
-          ),
-          continueSos(chatId)
-        )
-      }
-      if (text === "Продажа авто") {
-        return (
-          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
-        )
-      }
-      if (text === "Наши авто") {
-        return (
-          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
-        )
-      }
-      if (text === "Отредактировать профиль") {
-        await bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
-        return editProfile(chatId)
-      }
-      if (text === "Посмотреть мой профиль") {
-        return showProfile(chatId)
-      }
-      if (text === "Искать еще раз") {
-        return searchCar(chatId)
-      }
-      if (text === "Показать меню" || text === "Вернуться к меню" || text === "Я передумал и хочу вернуться в меню") {
-        return (
-          bot.sendMessage(
-            chatId,
-            `Что вас интересует?`,
-            menu
-          )
-        )
-      }
-    } catch (e) {
-      return bot.sendMessage(chatId, "Произошла какая-то ошибка");
-    }
-  });
-
-  bot.on("web_app_data", async (msg) => {
-    // bot.sendMessage(msg.chat.id, msg.web_app_data.data);
-    let strMsg = msg.web_app_data.data;
-    let arrData = strMsg.split(',');
-
-    let name = arrData[0].trim();
-    let surname = arrData[1].trim();
-    let car = arrData[2].trimEnd();
-    let carYear = arrData[3];
-    let carGRZ = arrData[4].toUpperCase();
-
-    if (name == '' || surname == '' || surname == '' || car == '' || carYear == '' || carGRZ == '') {
-      return bot.sendMessage(
-        msg.chat.id,
-        `Пожалуйста введите верные данные, попробуйте еще раз`,
-        reg
-      )
-    } else {
-      return (
-        Users.create({
-          chatId: msg.chat.id,
-          userName: name[0].toUpperCase() + name.substring(1),
-          userSurName: surname[0].toUpperCase() + surname.substring(1),
-          carModel: car.toLowerCase(),
-          carYear: carYear,
-          carGRZ: arrData[4].toUpperCase(),
-          carEngineModel: arrData[5].toUpperCase()
-        }),
-        bot.sendMessage(
-          msg.chat.id,
-          `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
-          menu
-        )
-      )
-    }
-  });
-
-  /* bot.on('callback_query', async (msg) => {
-    const data = msg.data;
-    const chatId = msg.message.chat.id;
-    if (data === '/back') {
+    if (text === "Информация о клубе") {
       return (
         bot.sendMessage(
           chatId,
-          `Что вас интересует?`,
-          menu
+          `Привет привееет!\nНа связи VW/SK CLUB 21 - крупнейшее автосообщество ваговодов Чувашии☝🏻\n\nМы - одна большая семья, которая держится друг за друга, делится своими радостями и неудачами, а все остальные переживают это, помогают в решении вопроса и поддерживают!\nВсе любят покрасоваться своими ласточками и мы не исключение💥\nВвиду этого у нас стабильно проходят автовстречи, где собирается вся наша дружная семья и обсуждает все события в большом кругу.\nА затем флаги в руки и в конвой.\nМы проезжаем по центральным улицам Чебоксар, чтобы показать нашу активность и дружность.\nНе забудем сказать и про партнеров, которых у нас немало. И этот список постоянно пополняется. От доставки еды до ремонта турбины - огромное количество сфер готовы предоставить клубную скидку для таких умничек и молодцов😂😂\n\nУ тебя нет ВАГа, но ты настоящий фанат немецкого автопрома? Не переживай и приходи на встречу🥰 Мы любим и уважаем каждого участника.\nДумаем, что стало немного понятнее.\nПоэтому чего ждать - добро пожаловать к нам в клуб!!!🎉🎊🎉🎊🎉`
         )
       )
     }
-  }); */
+    if (text === "Партнеры") {
+      return (
+        bot.sendMessage(
+          chatId,
+          `Перейдите для просмотра партнеров клуба ↓`,
+          partners
+        )
+      )
+    }
+    if (text === "/sos" || text === "Запросить помощь") {
+      return (
+        bot.sendMessage(
+          chatId,
+          "Надеюсь вы не шутите, ведь ваша просьба прилетит всем зарегистрированным участникам сообщества",
+          {
+            reply_markup: {
+              keyboard: [
+                [{ text: 'Вернуться к меню', callback_data: "/leaveSos" }],
+                [{ text: 'Все серьезно, у меня беда.\nХочу продолжить', callback_data: "/continueSos" }],
+              ],
+            }
+          }
+        )
+      )
+    }
+    if (text === "Все серьезно, у меня беда.\nХочу продолжить") {
+      return (
+        bot.sendMessage(
+          chatId,
+          "Коротко опишите вашу проблему и сообщите адрес, где вы находитесь.\nВажно!!!\nНе забудьте написать номер вашего телефона или оставьте ссылку на ваш телеграмм-профиль, иначе с вами не смогут связаться",
+          {
+            reply_markup: {
+              keyboard: [
+                [{ text: 'Вернуться к меню', callback_data: "/leaveSos" }],
+              ],
+            }
+          }
+        ),
+        continueSos(chatId)
+      )
+    }
+    if (text === "Продажа авто") {
+      return (
+        bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
+      )
+    }
+    if (text === "Поиск авто по ГРЗ") {
+      await bot.sendMessage(chatId, "Введи номер авто в формате A000AA00 или A000AA000 используя латинские буквы", back);
+      searchCar()
+    }
+    if (text === "Наши авто") {
+      return (
+        bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
+      )
+    }
+    if (text === "Отредактировать профиль") {
+      return bot.sendMessage(chatId, `Какие данные хотите изменить?`, profileFields)
+    }
+
+  });
+
 };
+
+bot.on("web_app_data", async (msg) => {
+  // bot.sendMessage(msg.chat.id, msg.web_app_data.data);
+  let strMsg = msg.web_app_data.data;
+  let arrData = strMsg.split(',');
+
+  let name = arrData[0].trim();
+  let surname = arrData[1].trim();
+  let car = arrData[2].trimEnd();
+  let carYear = arrData[3];
+  let carGRZ = arrData[4].toUpperCase();
+
+  if (name == '' || surname == '' || surname == '' || car == '' || carYear == '' || carGRZ == '') {
+    return bot.sendMessage(
+      msg.chat.id,
+      `Пожалуйста введите верные данные, попробуйте еще раз`,
+      reg
+    )
+  } else {
+    return (
+      Users.create({
+        chatId: msg.chat.id,
+        userName: name[0].toUpperCase() + name.substring(1),
+        userSurName: surname[0].toUpperCase() + surname.substring(1),
+        carModel: car.toLowerCase(),
+        carYear: carYear,
+        carGRZ: arrData[4].toUpperCase(),
+        carEngineModel: arrData[5].toUpperCase()
+      }),
+      bot.sendMessage(
+        msg.chat.id,
+        `Добро пожаловать ${name[0].toUpperCase() + name.substring(1)}!\nЧто тебя интересует?`,
+        menu
+      )
+    )
+  }
+});
+
+bot.onText(/\/start/, async (msg) => {
+  const text = msg.text;
+  const chatId = msg.chat.id;
+
+  const userChatId = await Users.findOne({ where: { chatId: chatId } });
+  if (userChatId) {
+    return (
+      bot.sendMessage(
+        chatId,
+        `Добро пожаловать в телеграм бот VAG клуба Чебоксар!`,
+        menu
+      )
+    )
+  } else {
+    return bot.sendMessage(
+      chatId,
+      `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста зарегистрируйтесь`,
+      reg
+    )
+  }
+})
+
+bot.onText(/Посмотреть мой профиль/, async (msg) => {
+  const text = msg.text;
+  const chatId = msg.chat.id;
+
+  profile = await Users.findOne({ where: { chatId: chatId } });
+  return (
+    bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nМодель двигателя: ${profile.carEngineModel}`),
+    bot.sendPhoto(
+      chatId,
+      `${profile.carImage}`
+    )
+  )
+})
+
+bot.onText(/Вернуться к меню/, async (msg) => {
+  const text = msg.text;
+  const chatId = msg.chat.id;
+
+  bot.removeAllListeners()
+  return (
+    bot.sendMessage(
+      chatId,
+      `Что вас интересует?`,
+      menu
+    ),
+    start()
+  )
+})
+
+bot.onText(/Мероприятия/, async (msg) => {
+  const text = msg.text;
+  const chatId = msg.chat.id;
+
+  await bot.sendPhoto(
+    chatId,
+    'src/img/event1.jpeg'
+  )
+  return (
+    bot.sendMessage(
+      chatId,
+      `Ближайшая запланированная встреча состоится 2 октября\nМесто проведения встречи: Театр оперы и балета\nВремя встречи: 20:00`
+    )
+  )
+})
 
 start();
