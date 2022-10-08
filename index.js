@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const sequelize = require('./db');
 
-const { menu, reg, partners, profileFields, searchAgain, back } = require('./keyboards');
+const { menu, reg, partners, ourcars, back } = require('./keyboards');
 const Users = require("./models");
 
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
@@ -227,17 +227,14 @@ const start = async () => {
           return (
             bot.sendMessage(
               chatId,
-              `Привет, я бот Volkswagen - Skoda сообщества Чебоксар\n
-              Здесь ты сможешь узнать обо всех запланированных мероприятиях нашего клуба,\n
-              получить скидку у наших партнеров и запросить помощь.\n
-              Так же ты можешь найти автомобиль `,
+              `Привет, что тебя интересует? `,
               menu
             )
           )
         } else {
           return bot.sendMessage(
             chatId,
-            `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста зарегистрируйтесь`,
+            `Добро пожаловать в телеграм бот VAG клуба Чебоксар!\nПожалуйста пройди регистрацию`,
             reg
           )
         }
@@ -310,13 +307,13 @@ const start = async () => {
       }
       if (text === "Наши авто") {
         return (
-          bot.sendMessage(chatId, `Этот отдел еще в разработке`, back)
+          bot.sendMessage(chatId, `Перейдите для просмотра автомобилей участников ↓`, ourcars)
         )
       }
       if (text === "Посмотреть мой профиль") {
         profile = await Users.findOne({ where: { chatId: chatId } });
         return (
-          bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nМодель двигателя: ${profile.carEngineModel}`),
+          bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nПримечание: ${profile.carEngineModel}`),
           bot.sendPhoto(
             chatId,
             `${profile.carImage}`

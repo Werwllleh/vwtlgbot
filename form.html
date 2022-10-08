@@ -40,15 +40,13 @@
 					<p class="fild-note">в формате <span>A000AA00</span> или <span>A000AA000</span> латинскими буквами</p>
 				</div>
 				<div class="form-item">
-					<input class="form-item__input" name="car_engine_name" placeholder="Модель двигателя авто" data-val="true"
-						type="text" pattern="^[a-zA-Z]+$" maxlength="4">
-					<p class="fild-note">в формате <span>XXXX</span></p>
+					<input class="form-item__input" name="car_engine_name" placeholder="Примечание (объем двигателя, модель)"
+						data-val="true" type="text">
 				</div>
 			</div>
 			<div class="form-footer">
 				<div class="form-note">
-					Поля со * обязательны к заполнению
-					<br>
+					Поля со * обязательны к заполнению<br><br>
 					Пожалуйста будьте внимательны при вводе имени и фамилии, эти данные вы не сможете изменить
 				</div>
 			</div>
@@ -63,6 +61,8 @@
 
 		.form-item__input:invalid {
 			border: 2px solid #ff2732c8;
+			color: var(--tg-theme-text-color);
+			background: repeating-linear-gradient(-60deg, rgb(255, 0, 0) 0, rgb(255, 0, 0) 1px, transparent 1px, transparent 10px);
 		}
 	</style>
 	<script>
@@ -153,8 +153,6 @@
 		}) */
 
 		// let inputs = document.querySelectorAll('#req-field');
-
-
 
 	</script>
 </body>

@@ -37,6 +37,18 @@ module.exports = {
 			],
 		}
 	},
+	ourcars: {
+		reply_markup: {
+			inline_keyboard: [
+				[{
+					text: "Автомобили участников",
+					web_app: {
+						url: "https://193.164.149.140/ourcars.html"
+					}
+				}],
+			],
+		}
+	},
 	back: {
 		reply_markup: {
 			keyboard: [
