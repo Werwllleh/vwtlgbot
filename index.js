@@ -199,8 +199,6 @@ const editProfile = async (chatId) => {
   })
 }
 
-
-
 const start = async () => {
 
   try {
@@ -359,9 +357,9 @@ bot.onText(/\/nomer (.+)/, async (msg, [source, match]) => {
     let carNum = await Users.findOne({ where: { carGRZ: queryGrz } });
 
     if (carNum) {
-      if (carNum.carImage) {
-        await bot.sendPhoto(chatId, `${carNum.carImage}`)
-      }
+      // if (carNum.carImage) {
+      //   await bot.sendPhoto(chatId, `${carNum.carImage}`)
+      // }
       return (
         bot.sendMessage(chatId, `Владелец: ${carNum.userName} ${carNum.userSurName}\nАвтомобиль: ${carNum.carModel}\nГод выпуска: ${carNum.carYear}\nМодель двигателя: ${carNum.carEngineModel}`)
       )

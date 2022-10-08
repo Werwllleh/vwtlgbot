@@ -43,6 +43,10 @@
 					<input class="form-item__input" name="car_engine_name" placeholder="Примечание (объем двигателя, модель)"
 						data-val="true" type="text">
 				</div>
+				<div class="form-item">
+					<input class="form-item-check" type="checkbox" id="scales" name="pdn">
+					<label for="pdn">Согласен на обработку данных</label>
+				</div>
 			</div>
 			<div class="form-footer">
 				<div class="form-note">
@@ -62,7 +66,7 @@
 		.form-item__input:invalid {
 			border: 2px solid #ff2732c8;
 			color: var(--tg-theme-text-color);
-			background: repeating-linear-gradient(-60deg, rgb(255, 0, 0) 0, rgb(255, 0, 0) 1px, transparent 1px, transparent 10px);
+			background: repeating-linear-gradient(-60deg, rgba(255, 0, 0, 0.349) 0, rgba(255, 0, 0, 0.349) 1px, transparent 1px, transparent 12px);
 		}
 	</style>
 	<script>
@@ -73,13 +77,23 @@
 		let car_year = document.querySelector('input[name="car_year"]');
 		let car_grz = document.querySelector('input[name="car_grz"]');
 		let car_engine_name = document.querySelector('input[name="car_engine_name"]');
+		let check = document.querySelector('.form-item-check');
+
 
 		let inputs = document.querySelectorAll('#req-field');
 
 		let tg = window.Telegram.WebApp;
+		tg.ready();
 		tg.expand();
-		tg.MainButton.show();
 		tg.MainButton.text = 'Отправить';
+
+		check.addEventListener('change', function () {
+			if (this.checked) {
+				tg.MainButton.show();
+			} else {
+				tg.MainButton.hide();
+			}
+		});
 
 		tg.onEvent('mainButtonClicked', function () {
 			tg.sendData(
