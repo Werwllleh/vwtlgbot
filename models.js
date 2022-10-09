@@ -15,4 +15,7 @@ const Users = sequelize.define('user', {
 	timestamps: false
 })
 
+
+// const Partners = sequelize.
+
 module.exports = Users;
