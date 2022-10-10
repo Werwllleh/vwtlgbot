@@ -10,12 +10,8 @@ const Users = sequelize.define('user', {
 	carYear: { type: DataTypes.INTEGER, allowNull: false },
 	carGRZ: { type: DataTypes.STRING, unique: true, allowNull: false },
 	carEngineModel: { type: DataTypes.STRING, allowNull: true },
-	carImage: { type: DataTypes.STRING, allowNull: true },
 }, {
 	timestamps: false
 })
-
-
-// const Partners = sequelize.
 
 module.exports = Users;

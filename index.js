@@ -1,24 +1,34 @@
 const TelegramApi = require("node-telegram-bot-api");
 
-const express = require('express');
-const cors = require('cors');
-
 const sequelize = require('./db');
 
 const { menu, reg, partners, ourcars, back, profile, editprofile } = require('./keyboards');
 const Users = require("./models");
 
-
 const token = "5632609691:AAHJ6CvPeasSSrUHoGZePHEeLudoZv3sIR4";
 
 const bot = new TelegramApi(token, { polling: true });
 
-const app = express();
-
-app.use(express.json());
-app.use(cors());
-
 process.env["NTBA_FIX_350"] = 1;
+
+const express = require('express')
+
+const PORT = 5000;
+
+const app = express()
+
+app.use(express.json())
+app.use(express.static('static'))
+// app.use(fileUpload({}))
+// app.use('/api', router)
+
+async function startApp() {
+  try {
+    app.listen(PORT, () => console.log('SERVER STARTED ON PORT ' + PORT))
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 
 const continueSos = async (chatId) => {
@@ -54,171 +64,22 @@ const continueSos = async (chatId) => {
   })
 }
 
-/* const editProfile = async (chatId) => {
-  return bot.addListener('message', async (msg) => {
-    if (msg.text === 'Поменять авто') {
-      await bot.sendMessage(chatId, `Напишите марку и модель латинскими буквами`, back)
-      return bot.addListener('message', async (msg) => {
-        if (/^[a-zA-Z\s]+\s[a-zA-Z0-9\s]+$/.test(msg.text)) {
-          return (
-            Users.update({ carModel: `${msg.text.toLowerCase().trimEnd()}` }, {
-              where: {
-                chatId: msg.chat.id
-              }
-            }),
-            bot.sendMessage(chatId, `Вы обновили марку и модель авто`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else if (msg.text === 'Вернуться к меню') {
-          return (
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else {
-          return (
-            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        }
-      })
-    } else if (msg.text === 'Сменить номер') {
-      await bot.sendMessage(chatId, `Напишите гос. номер латинскими буквами\n(формат A000AA00 или A000AA000)`, back)
-      return bot.addListener('message', async (msg) => {
-        if (/^[АВЕКМНОРСТУХABEKMHOPCTYX]\d{3}(?<!000)[АВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/.test(msg.text)) {
-          return (
-            Users.update({ carGRZ: `${msg.text.toUpperCase().trimEnd()}` }, {
-              where: {
-                chatId: msg.chat.id
-              }
-            }),
-            bot.sendMessage(chatId, `Вы обновили гос. номер вашего автомобиля`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else if (msg.text === '/Вернуться к меню') {
-          return (
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else {
-          return (
-            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        }
-      })
-    } else if (msg.text === 'Добавить/изменить модель двигателя') {
-      await bot.sendMessage(chatId, `Напишите модель вашего двигателя\n(формат XXXX)`, back)
-      return bot.addListener('message', async (msg) => {
-        if (/^[a-zA-Z]+$/.test(msg.text)) {
-          return (
-            Users.update({ carEngineModel: `${msg.text.toUpperCase().trimEnd()}` }, {
-              where: {
-                chatId: msg.chat.id
-              }
-            }),
-            bot.sendMessage(chatId, `Вы обновили модель вашего двигателя`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else if (msg.text === '/Вернуться к меню') {
-          return (
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else {
-          return (
-            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        }
-      })
-    } else if (msg.text === 'Изменить год авто') {
-      await bot.sendMessage(chatId, `Напишите год выпуска вашего авто`, back)
-      return bot.addListener('message', async (msg) => {
-        let date = new Date();
-        let year = date.getFullYear();
-        if (/^\d+$/.test(msg.text) && msg.text >= 1900 && msg.text <= year) {
-          return (
-            Users.update({ carYear: `${msg.text.trimEnd()}` }, {
-              where: {
-                chatId: msg.chat.id
-              }
-            }),
-            bot.sendMessage(chatId, `Вы обновили год выпуска вашего авто`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else if (msg.text === '/Вернуться к меню') {
-          return (
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else {
-          return (
-            bot.sendMessage(chatId, `Некорректный ввод, попробуйте еще раз`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        }
-      })
-    } else if (msg.text === 'Добавить/поменять фото авто') {
-      await bot.sendMessage(chatId, `Загрузите одно изображение вашего автомобиля`, back)
-      return bot.addListener('message', async (msg) => {
-        if (msg.photo) {
-          let carImg = msg.photo[0].file_id;
-          return (
-            Users.update({ carImage: `${carImg}` }, {
-              where: {
-                chatId: msg.chat.id
-              }
-            }),
-            bot.sendMessage(chatId, `Вы обновили фото вашего авто`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else if (msg.text === '/Вернуться к меню') {
-          return (
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        } else {
-          return (
-            bot.sendMessage(chatId, `Вы не загрузили фотографию`, back),
-            bot.removeListener("message"),
-            start(chatId)
-          )
-        }
-      })
-    }
-  })
-} */
-
 const showProfile = async (chatId) => {
-  let profile = await Users.findOne({ where: { chatId: chatId } });
-  if (profile.carImage) {
-    await bot.sendPhoto(chatId, `${profile.carImage}`)
-  }
-  return (
-    bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nПримечание: ${profile.carEngineModel}`)
-  )
-}
-
-const editCar = async (chatId) => {
-  return bot.on('message', async (msg) => {
-    if (chatId === msg.chat.id) {
-      bot.sendMessage(msg.chat.id, 'text text', back)
-      bot.removeAllListeners('message')
+  try {
+    let profile = await Users.findOne({ where: { chatId: chatId } });
+    if (profile.carImage) {
+      await bot.sendPhoto(chatId, `${profile.carImage}`)
     }
-  })
+    return (
+      bot.sendMessage(chatId, `Вы: ${profile.userName} ${profile.userSurName}\nВаше авто: ${profile.carModel}\nГод выпуска: ${profile.carYear}\nНомер авто: ${profile.carGRZ}\nПримечание: ${profile.carEngineModel}`)
+    )
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const start = async () => {
-
+  startApp()
   try {
     await sequelize.authenticate()
     await sequelize.sync()
@@ -325,7 +186,7 @@ const start = async () => {
         showProfile(chatId)
       }
       if (text === "Изменить авто") {
-        editCar(chatId)
+        await bot.sendMessage(chatId, 'Используй команду /editcar\nНапример: /editcar volkswagen golf');
       }
       if (text === "Отредактировать профиль") {
         return bot.sendMessage(chatId, 'Что хочешь изменить?', editprofile);
@@ -544,6 +405,3 @@ bot.on("web_app_data", async (msg) => {
 
 start();
 
-const PORT = 8000;
-
-app.listen(PORT, () => console.log('server started on PORT ' + PORT))
