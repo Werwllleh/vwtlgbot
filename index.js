@@ -22,13 +22,23 @@ app.use(express.static('static'))
 // app.use(fileUpload({}))
 // app.use('/api', router)
 
-async function startApp() {
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World!\n');
+});
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+
+/* async function startApp() {
   try {
     app.listen(PORT, () => console.log('SERVER STARTED ON PORT ' + PORT))
   } catch (e) {
     console.log(e)
   }
-}
+} */
 
 
 const continueSos = async (chatId) => {
@@ -79,7 +89,7 @@ const showProfile = async (chatId) => {
 }
 
 const start = async () => {
-  startApp()
+
   try {
     await sequelize.authenticate()
     await sequelize.sync()
